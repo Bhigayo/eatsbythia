@@ -1,0 +1,2013 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Eatsbythia | Today's Menu</title>
+<style>
+:root{--coral:#ef4d68;--soft:#ffe8ed;--ink:#171717;--cream:#faf7f1;--paper:#fffdf9;--muted:#77736c;--line:#e5dfd6}
+*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.wrap{max-width:1100px;margin:auto;padding:20px 18px 120px}
+header{display:flex;justify-content:space-between;align-items:center;padding:8px 0 22px}.logo{width:120px;height:90px;object-fit:cover;object-position:center 47%;border-radius:5px}.story{background:none;border:1px solid var(--ink);border-radius:20px;padding:9px 13px;font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.hero{display:grid;grid-template-columns:1fr .9fr;gap:30px;align-items:center;padding:28px 0 38px}.eyebrow{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:750}h1{font-size:clamp(48px,7vw,78px);line-height:.86;letter-spacing:-.07em;margin:13px 0 18px}h1 em{font-family:Georgia,serif;font-weight:400}.hero p{font-size:13px;line-height:1.75;color:var(--muted);max-width:520px}.hero-art{aspect-ratio:1.15;border-radius:24px;overflow:hidden;background:#eee1d8}.hero-art img{width:100%;height:100%;object-fit:cover;object-position:center 55%}
+.menu-head{display:flex;justify-content:space-between;align-items:end;margin:8px 0 15px}.menu-head h2{font-size:25px;letter-spacing:-.04em;margin:7px 0}.note{font-size:10px;color:var(--muted)}.menu{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.item{background:var(--paper);border:1px solid var(--line);border-radius:17px;overflow:hidden}.food{height:185px;background:linear-gradient(135deg,#efe5dc,#f7f0e9);display:grid;place-items:center;color:#aaa;font-size:9px;letter-spacing:.13em;text-transform:uppercase}.body{padding:16px}.top{display:flex;justify-content:space-between;gap:8px}.item h3{font-size:14px;margin:0}.price{font-size:14px;font-weight:800}.desc{font-size:10px;color:var(--muted);line-height:1.55;margin:7px 0 14px}.add{width:100%;border:0;background:var(--ink);color:#fff;padding:11px;border-radius:9px;font-size:10px;font-weight:800}.add:hover{background:var(--coral)}
+.drawer{position:fixed;right:18px;bottom:18px;width:min(390px,calc(100vw - 30px));background:var(--ink);color:#fff;border-radius:20px;padding:18px;box-shadow:0 25px 70px #0004;z-index:10;transform:translateY(120%);transition:.4s}.drawer.show{transform:none}.dh{display:flex;justify-content:space-between}.close{border:0;background:#303030;color:#aaa;border-radius:50%;width:28px;height:28px}.cart{max-height:180px;overflow:auto;margin:12px 0}.row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #303030;font-size:11px}.row small{display:block;color:#999;margin-top:3px}.total{display:flex;justify-content:space-between;font-size:13px;font-weight:800}.checkout{width:100%;border:0;background:var(--coral);color:#fff;padding:13px;border-radius:9px;font-size:10px;font-weight:800;margin-top:12px}
+.modal{display:none;position:fixed;inset:0;background:#0008;z-index:20;place-items:center;padding:18px}.modal.show{display:grid}.modal-card{background:var(--paper);border-radius:20px;padding:24px;width:min(500px,100%)}.modal-card h2{font-size:28px;letter-spacing:-.05em;margin:8px 0 18px}.field{display:grid;gap:6px;margin:11px 0}.field label{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:750}.field input,.field select{border:1px solid var(--line);padding:11px;border-radius:9px;background:#fff}.place{width:100%;border:0;background:var(--ink);color:#fff;padding:13px;border-radius:9px;font-size:10px;font-weight:800;margin-top:8px}.success{text-align:center;padding:25px 5px}.check{width:52px;height:52px;border-radius:50%;background:#e5f4ed;color:#287a5a;display:grid;place-items:center;margin:auto;font-size:24px}.success h2{font-size:30px;letter-spacing:-.05em}.success p{font-size:11px;color:var(--muted);line-height:1.7}.order{display:inline-block;background:var(--soft);padding:7px 10px;border-radius:20px;font-size:9px;font-weight:800}
+@media(max-width:750px){.hero{grid-template-columns:1fr}.hero-art{order:-1}.menu{grid-template-columns:1fr 1fr}}@media(max-width:500px){.menu{grid-template-columns:1fr}.food{height:210px}.menu-head{display:block}.note{margin-top:6px}}
+
+/* V2 kitchen dashboard */
+.admin-toggle{position:fixed;left:18px;bottom:18px;z-index:25;border:1px solid #d9d2c8;background:#fffdf9;color:#171717;border-radius:22px;padding:10px 14px;font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;box-shadow:0 8px 25px #0001}
+.admin{display:none;min-height:100vh;background:#f4f1eb}.admin.show{display:block}.customer.hide{display:none}
+.admin-wrap{max-width:1180px;margin:auto;padding:24px 20px 60px}.admin-top{display:flex;justify-content:space-between;align-items:center;gap:20px}.admin-logo{width:105px;height:50px;object-fit:cover;object-position:center 47%;border-radius:4px}.admin-actions{display:flex;gap:7px}.admin-btn{border:1px solid #d9d2c8;background:#fffdf9;padding:10px 12px;border-radius:9px;font-size:9px;font-weight:750}.admin-btn.primary{background:#171717;color:#fff;border-color:#171717}.admin-title{margin:30px 0 20px}.admin-title h1{font-size:42px;margin:8px 0}.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.kpi{background:#fffdf9;border:1px solid #e2dbd2;border-radius:14px;padding:18px}.kpi span{font-size:8px;letter-spacing:.13em;text-transform:uppercase;color:#77736c}.kpi strong{display:block;font-size:27px;letter-spacing:-.05em;margin-top:8px}.orders-head{display:flex;justify-content:space-between;align-items:end;margin:30px 0 12px}.orders-head h2{font-size:20px;letter-spacing:-.04em;margin:6px 0}.filters{display:flex;gap:5px;flex-wrap:wrap}.filter{border:1px solid #ddd6cd;background:#fffdf9;padding:8px 10px;border-radius:18px;font-size:8px;color:#777}.filter.active{background:#171717;color:#fff;border-color:#171717}.order-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}.order-card{background:#fffdf9;border:1px solid #e2dbd2;border-radius:15px;padding:17px}.order-card.new{border-left:4px solid var(--coral)}.order-top{display:flex;justify-content:space-between;gap:10px}.order-no{font-size:9px;letter-spacing:.1em;color:#777}.order-name{font-size:15px;font-weight:800;margin-top:4px}.status{font-size:8px;letter-spacing:.1em;text-transform:uppercase;padding:6px 8px;border-radius:12px;background:#ffe8ed;color:#b4314c;height:max-content}.status.confirmed{background:#eeeafd;color:#5d51bf}.status.preparing{background:#fff1d8;color:#936421}.status.ready{background:#e4f3ec;color:#287a5a}.status.completed{background:#ededeb;color:#666}.order-items{margin:13px 0;border-top:1px solid #eee8df;border-bottom:1px solid #eee8df;padding:10px 0;font-size:10px;line-height:1.8}.order-meta{font-size:9px;color:#777;line-height:1.8}.order-bottom{display:flex;justify-content:space-between;align-items:center;margin-top:13px}.order-total{font-weight:850;font-size:13px}.order-actions{display:flex;gap:5px}.oa{border:1px solid #ddd6cd;background:#fff;padding:8px 9px;border-radius:8px;font-size:8px;font-weight:750}.oa.next{background:#171717;color:#fff;border-color:#171717}.menu-admin{margin-top:30px;display:grid;grid-template-columns:1fr 1fr;gap:12px}.menu-admin-card{background:#fffdf9;border:1px solid #e2dbd2;border-radius:15px;padding:19px}.menu-admin-card h3{margin:0 0 5px;font-size:15px}.menu-admin-card p{font-size:10px;color:#777;line-height:1.6}.dish-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-top:1px solid #eee8df}.dish-name{font-size:10px;font-weight:750}.dish-price{font-size:10px;color:#777}.sold{font-size:8px;padding:5px 7px;border-radius:12px;background:#ededeb;color:#666}.available{font-size:8px;padding:5px 7px;border-radius:12px;background:#e4f3ec;color:#287a5a}.toast-v2{position:fixed;right:20px;bottom:20px;background:#171717;color:#fff;padding:12px 15px;border-radius:10px;font-size:9px;opacity:0;transform:translateY(10px);transition:.3s;z-index:50}.toast-v2.show{opacity:1;transform:none}
+@media(max-width:760px){.stats-row{grid-template-columns:repeat(2,1fr)}.order-grid,.menu-admin{grid-template-columns:1fr}.admin-title h1{font-size:36px}}
+
+
+/* V3 live order engine */
+.live-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:20px;background:#e5f4ed;color:#287a5a;font-size:8px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.live-dot{width:6px;height:6px;background:#287a5a;border-radius:50%;animation:pulse 1.7s infinite}@keyframes pulse{50%{opacity:.35}}
+.customer-status{display:none;margin:18px 0;padding:18px;background:#fffdf9;border:1px solid var(--line);border-radius:15px}.customer-status.show{display:block}.cs-top{display:flex;justify-content:space-between;gap:15px}.cs-order{font-size:9px;letter-spacing:.1em;color:var(--muted)}.cs-name{font-size:19px;font-weight:800;margin-top:4px}.track{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin:18px 0 8px}.track-step{height:5px;border-radius:8px;background:#dedbd4}.track-step.on{background:var(--coral)}.track-labels{display:grid;grid-template-columns:repeat(5,1fr);font-size:7px;color:#888;gap:5px}.track-labels span.active{color:var(--ink);font-weight:800}.status-message{font-size:10px;color:var(--muted);margin-top:13px}
+.live-order-banner{margin-top:12px;padding:10px 12px;background:#f1edfF;border:1px solid #ddd7fb;border-radius:9px;font-size:9px;color:#5e54a9}
+.admin-live{display:flex;align-items:center;gap:9px}
+.order-new-highlight{animation:newPulse 1.4s ease}@keyframes newPulse{0%{box-shadow:0 0 0 0 #ef4d6866}100%{box-shadow:0 0 0 13px #ef4d6800}}
+.sync-note{font-size:8px;color:#8a857d;margin-top:12px}
+.mode-switch{display:flex;gap:6px;margin:18px 0}.mode-switch button{border:1px solid #ddd6cd;background:#fffdf9;border-radius:18px;padding:8px 11px;font-size:8px}.mode-switch button.active{background:#171717;color:#fff;border-color:#171717}
+@media(max-width:600px){.track-labels{font-size:6px}.cs-top{display:block}.cs-top .live-pill{margin-top:8px}}
+
+
+/* V4: hosted-backend-ready architecture, customer lookup, kitchen auth shell, receipts */
+.v4-note{margin-top:10px;padding:11px 13px;background:#fff7df;border:1px solid #ead9a8;border-radius:9px;font-size:9px;color:#735d25;line-height:1.55}
+.account-panel{display:none;margin:14px 0;padding:16px;background:#fffdf9;border:1px solid var(--line);border-radius:14px}.account-panel.show{display:block}
+.lookup{display:flex;gap:7px;margin-top:10px}.lookup input{flex:1;border:1px solid var(--line);border-radius:9px;padding:10px;background:#fff}.lookup button{border:0;background:#171717;color:#fff;border-radius:9px;padding:10px 13px;font-size:9px;font-weight:800}
+.kitchen-login{position:fixed;inset:0;background:#0008;z-index:60;display:none;place-items:center;padding:18px}.kitchen-login.show{display:grid}.login-card{width:min(390px,100%);background:#fffdf9;border-radius:20px;padding:24px}.login-card h2{font-size:28px;letter-spacing:-.05em;margin:8px 0 18px}.login-card input{width:100%;border:1px solid var(--line);padding:12px;border-radius:9px;margin:6px 0 12px}.login-error{font-size:9px;color:#b4314c;min-height:14px}
+.admin-lock{display:inline-flex;align-items:center;gap:6px;font-size:8px;color:#777;padding:7px 9px;border:1px solid #ddd6cd;border-radius:18px;background:#fffdf9}
+.receipt{margin-top:16px;border-top:1px dashed var(--line);padding-top:14px}.receipt pre{font:10px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap;color:#555;margin:0}.receipt-actions{display:flex;gap:6px;margin-top:10px}.receipt-actions button{border:1px solid var(--line);background:#fff;padding:8px 10px;border-radius:8px;font-size:8px}
+.analytics-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:12px}.analytics{padding:13px;background:#fffdf9;border:1px solid #e2dbd2;border-radius:11px}.analytics span{font-size:8px;color:#777}.analytics strong{display:block;font-size:17px;margin-top:5px}
+@media(max-width:600px){.lookup{display:grid}.analytics-strip{grid-template-columns:1fr 1fr 1fr}}
+
+
+.mvpbar{display:flex;justify-content:space-between;align-items:center;margin:10px 0;padding:7px 0}
+.mvpbadge{font-size:8px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:#e5f4ed;color:#287a5a;border-radius:18px;padding:7px 10px}
+.menu-editor{margin-top:16px;background:#fffdf9;border:1px solid #e2dbd2;border-radius:15px;padding:18px}
+.editor-row{display:grid;grid-template-columns:1fr 90px 85px 70px;gap:7px;align-items:center;border-top:1px solid #eee8df;padding:10px 0}
+.editor-row input{width:100%;border:1px solid #ddd6cd;background:#fff;padding:9px;border-radius:8px;font-size:9px}
+.editor-row button{border:1px solid #ddd6cd;background:#fff;border-radius:8px;padding:8px;font-size:8px;font-weight:750}
+.editor-row .avail{background:#e5f4ed;color:#287a5a}.editor-row .sold{background:#ededeb;color:#666}
+.adddish{display:grid;grid-template-columns:1fr 90px 75px;gap:7px;margin-top:12px}
+.adddish input{border:1px solid #ddd6cd;border-radius:8px;padding:9px;font-size:9px}
+.adddish button{border:0;background:#171717;color:#fff;border-radius:8px;font-size:8px;font-weight:800}
+.mvpnote{margin-top:12px;padding:12px 14px;background:#f0edff;border:1px solid #ddd7fb;border-radius:10px;font-size:9px;color:#5d51bf;line-height:1.6}
+@media(max-width:650px){.editor-row{grid-template-columns:1fr 80px}.editor-row button{grid-column:auto}.adddish{grid-template-columns:1fr 90px}.adddish button{grid-column:1/-1}}
+
+.modal-card {
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 50%;
+  background: #eee;
+  color: #111;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+/* Kitchen login should be a true modal overlay */
+.kitchen-login {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(20, 20, 20, 0.72);
+  backdrop-filter: blur(10px);
+}
+
+.kitchen-login.show {
+  display: flex;
+}
+
+.kitchen-login-card {
+  width: min(520px, 100%);
+  background: #fdfaf5;
+  border: 1px solid rgba(0,0,0,.08);
+  border-radius: 28px;
+  padding: 42px;
+  box-shadow: 0 30px 90px rgba(0,0,0,.22);
+}
+
+.kitchen-login-card .eyebrow {
+  margin-bottom: 12px;
+}
+
+.kitchen-login-card h2 {
+  margin: 0 0 12px;
+  font-size: clamp(32px, 5vw, 48px);
+  line-height: .98;
+}
+
+.kitchen-login-card .login-intro {
+  margin: 0 0 28px;
+  color: #66707a;
+  line-height: 1.5;
+}
+
+.kitchen-login-card .field {
+  margin-bottom: 16px;
+}
+
+.kitchen-login-card label {
+  display: block;
+  margin-bottom: 7px;
+}
+
+.kitchen-login-card input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.kitchen-login-actions {
+  display: grid;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.kitchen-login-actions button {
+  width: 100%;
+}
+
+.kitchen-login-error {
+  margin-top: 12px;
+  color: #b42318;
+  font-size: 14px;
+}
+.kitchen-new-alert{
+  position:fixed;
+  top:20px;
+  right:20px;
+  z-index:9999;
+
+  width:min(340px,calc(100vw - 40px));
+
+  display:flex;
+  align-items:center;
+  gap:12px;
+
+  padding:14px;
+
+  background:#fffdf9;
+  border:1px solid #e5ddd3;
+  border-radius:14px;
+
+  box-shadow:0 14px 40px rgba(0,0,0,.15);
+
+  transform:translateY(-20px);
+  opacity:0;
+
+  transition:
+    opacity .3s ease,
+    transform .3s ease;
+}
+
+.kitchen-new-alert.show{
+  transform:translateY(0);
+  opacity:1;
+}
+
+.kna-icon{
+  width:34px;
+  height:34px;
+  flex:none;
+
+  display:grid;
+  place-items:center;
+
+  border-radius:50%;
+
+  background:#e5f4ed;
+  color:#287a5a;
+
+  font-size:15px;
+  font-weight:900;
+}
+
+.kna-content{
+  min-width:0;
+  flex:1;
+}
+
+.kna-eyebrow{
+  font-size:8px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:#287a5a;
+  font-weight:800;
+  margin-bottom:3px;
+}
+
+.kna-content strong{
+  display:block;
+  font-size:14px;
+  color:var(--ink);
+}
+
+.kna-meta{
+  margin-top:4px;
+  font-size:9px;
+  color:var(--muted);
+}
+
+.kna-close{
+  border:0;
+  background:none;
+  color:#888;
+  font-size:18px;
+  cursor:pointer;
+  padding:4px;
+}
+/* APP VIEW SWITCHING */
+
+#customer {
+  display: block;
+}
+
+#admin {
+  display: none;
+}
+
+body.kitchen-mode #customer {
+  display: none;
+}
+
+body.kitchen-mode #admin {
+  display: block;
+}
+
+/* Kitchen login sits above the current view */
+#kitchenLogin {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+#kitchenLogin.show {
+  display: flex;
+}
+</style>
+</head>
+<body>
+<div class="customer" id="customer"><div class="wrap">
+<div class="mode-switch" id="modeSwitch">
+ <button class="active" onclick="setDemoMode('customer',this)">Customer</button>
+ <button onclick="setDemoMode('kitchen',this)">Fathia's Kitchen</button>
+</div>
+
+<div class="mvpbar"><span class="mvpbadge">Eatsbythia MVP</span><span class="note">Manchester & surrounding areas</span></div><header><img class="logo" src="ebt.png" alt="Eatsbythia"><button class="story" onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">Today's menu ↓</button></header>
+
+<section class="customer-status" id="customerStatus">
+  <div class="cs-top">
+    <div><div class="cs-order" id="customerOrderNo">ORDER #ETB-000</div><div class="cs-name" id="customerOrderName">Your order</div></div>
+    <span class="live-pill"><i class="live-dot"></i> Live order</span>
+  </div>
+  
+  <div class="track" id="customerTrack">
+  <i class="track-step on"></i>
+  <i class="track-step"></i>
+  <i class="track-step"></i>
+  <i class="track-step"></i>
+  <i class="track-step"></i>
+</div>
+
+<div class="track-labels">
+  <span class="active">Received</span>
+  <span>Confirmed</span>
+  <span>Preparing</span>
+  <span>Ready</span>
+  <span>Completed</span>
+</div>
+  <div class="status-message" id="customerStatusMessage">Your order has been received by Eatsbythia.</div>
+</section>
+
+<section class="hero">
+<div><div class="eyebrow">Home-cooked Nigerian food</div><h1>Good food.<br><em>Made with love.</em></h1><p>Freshly prepared by Eatsbythia. Choose what you want, tell us where and when, and we'll take it from there.</p></div>
+<div class="hero-art"><img src="ebt.png" alt=""></div>
+</section>
+<div class="live-order-banner">Orders are sent straight to Eatsbythia’s kitchen. No payment is needed at checkout.</div>
+<div class="account-panel" id="lookupPanel">
+  <div class="eyebrow">Find an order</div>
+  <div style="font-size:16px;font-weight:800;margin-top:5px">Already ordered?</div>
+  <div class="lookup"><input id="lookupInput" placeholder="Order number, e.g. ETB-241"><button onclick="lookupOrder()">Find order</button></div>
+  <div id="lookupResult"></div>
+</div>
+<section id="menu"><div class="menu-head"><div><div class="eyebrow">Today's menu</div><h2>What's cooking?</h2></div><div class="note">Orders close at 6:00 PM</div></div><div class="menu" id="menuGrid"></div></section>
+</div></div>
+<div class="drawer" id="drawer">
+  <div class="dh">
+    <b>Your order · <span id="count">0</span></b>
+    <button
+      class="close"
+      onclick="document.getElementById('drawer').classList.remove('show')"
+    >
+      ×
+    </button>
+  </div>
+
+  <div class="cart" id="cart"></div>
+</div><div class="modal" id="modal"><div class="modal-card" id="modalCard">
+  <button class="modal-close" onclick="document.getElementById('modal').classList.remove('show')">×</button><div class="eyebrow">Eatsbythia · Your order</div><h2>Where should we send it?</h2><div class="field"><label>Name</label><input id="name" placeholder="Your name"></div><div class="field"><label>Phone / WhatsApp</label><input id="phone" placeholder="07..."></div><div class="field"><label>Order type</label><select id="type"><option>Delivery</option><option>Collection</option></select></div><div class="field" id="addr"><label>Delivery address</label><input id="address" placeholder="Your address"></div><div class="field"><label>Preferred time</label><select id="time"><option>12:00–13:00</option><option>13:00–14:00</option><option>14:00–15:00</option><option>15:00–16:00</option><option>16:00–17:00</option><option>17:00–18:00</option></select></div><button class="place" id="placeOrderBtn" onclick="placeOrder()">Pay & place order</button></div></div>
+
+  </div>
+</div>
+    <div class="kitchen-login" id="kitchenLogin">
+  <div class="kitchen-login-card">
+
+    <div class="eyebrow">Eatsbythia · Kitchen</div>
+
+    <h2>Welcome back.</h2>
+
+    <p class="login-intro">
+      Sign in to access the Eatsbythia kitchen dashboard.
+    </p>
+
+    <div class="field">
+      <label for="kitchenEmail">Email</label>
+      <input
+        id="kitchenEmail"
+        type="email"
+        placeholder="Kitchen email"
+        autocomplete="username"
+      >
+    </div>
+
+    <div class="field">
+      <label for="kitchenPassword">Password</label>
+      <input
+        id="kitchenPassword"
+        type="password"
+        placeholder="Password"
+        autocomplete="current-password"
+      >
+    </div>
+
+    <div
+      id="kitchenLoginError"
+      class="kitchen-login-error"
+    ></div>
+
+    <div class="kitchen-login-actions">
+      <button class="place" onclick="loginKitchen()">
+        Enter kitchen →
+      </button>
+
+      <button class="secondary" onclick="closeKitchenLogin()">
+        Cancel
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<button class="admin-toggle" onclick="toggleAdmin()">Fathia · Kitchen</button>
+
+<section class="admin" id="admin">
+  <div class="admin-wrap">
+    <div class="admin-top">
+      <img class="admin-logo" src="ebt.png" alt="Eatsbythia">
+      <div class="admin-actions">
+        <span class="live-pill"><i class="live-dot"></i> Live</span>
+        <button
+  class="admin-btn"
+  onclick="enableKitchenSound()"
+>
+  🔔 Enable sound
+</button>
+        <button class="admin-btn" onclick="showCustomer()">
+  ← Customer view
+</button>
+        <button class="admin-btn primary" onclick="showToast('Menu saved for today ✓')">Save menu</button>
+      </div>
+    </div>
+
+    <div class="admin-title">
+      <div class="eyebrow">Kitchen dashboard · Monday 24 August</div>
+      <h1>Good morning, Fathia.</h1>
+      <div class="note">Everything for today's orders, in one place.</div>
+      <div class="sync-note">Live orders from Eatsbythia's kitchen database, updated automatically.</div>
+    </div>
+
+    <div class="stats-row">
+      <div class="kpi"><span>New orders</span><strong id="kpiNew">4</strong></div>
+      <div class="kpi"><span>Today's orders</span><strong id="kpiTotal">17</strong></div>
+      <div class="kpi"><span>Expected sales</span><strong>£186</strong></div>
+      <div class="kpi"><span>Ready</span><strong id="kpiReady">6</strong></div>
+    </div>
+
+    <div class="orders-head">
+      <div><div class="eyebrow">Order queue</div><h2>Today's orders</h2></div>
+      <div class="filters">
+        <button class="filter" onclick="filterOrders('all',this)">All</button>
+        <button class="filter active" onclick="filterOrders('new',this)">New</button>
+        <button class="filter" onclick="filterOrders('confirmed',this)">Confirmed</button>
+        <button class="filter" onclick="filterOrders('preparing',this)">Preparing</button>
+        <button class="filter" onclick="filterOrders('ready',this)">Ready</button>
+      </div>
+    </div>
+
+    <div class="order-grid" id="orderGrid"></div>
+
+    
+<div class="analytics-strip">
+ <div class="analytics"><span>AVERAGE ORDER</span><strong id="avgOrder">£0.00</strong></div>
+ <div class="analytics"><span>MEALS TODAY</span><strong id="mealCount">0</strong></div>
+ <div class="analytics"><span>TOP DISH</span><strong id="topDish">—</strong></div>
+</div>
+
+
+<div class="menu-editor">
+<div class="eyebrow">Menu control</div>
+<h3 style="margin:6px 0 12px">Today's Eatsbythia menu</h3>
+<div style="font-size:9px;color:#777;line-height:1.6">Fathia can change prices, mark dishes sold out, add dishes, and publish the menu without touching the website code.</div>
+<div id="menuEditorRows"></div>
+<button
+  type="button"
+  class="add-dish-btn"
+  onclick="openAddDishForm()"
+>
+  + Add New Dish
+</button>
+
+<div id="addDishForm" class="add-dish-form" style="display:none;">
+  <input
+    id="newDishName"
+    type="text"
+    placeholder="Dish name"
+  >
+
+  <input
+    id="newDishPrice"
+    type="number"
+    min="0"
+    step=".50"
+    placeholder="Price"
+  >
+
+  <input
+    id="newDishDescription"
+    type="text"
+    placeholder="Description"
+  >
+
+  <div class="add-dish-actions">
+    <button type="button" onclick="saveNewDish()">
+      Add Dish
+    </button>
+
+    <button type="button" onclick="closeAddDishForm()">
+      Cancel
+    </button>
+  </div>
+</div>
+<div class="adddish"><input id="newDish" placeholder="New dish name"><input id="newPrice" type="number" min="0" step=".50" placeholder="Price"><button onclick="addDish()">+ Add dish</button></div>
+<button class="admin-btn primary" style="margin-top:10px" onclick="publishMenu()">Publish today's menu</button>
+</div>
+<div class="menu-admin">
+      <div class="menu-admin-card">
+        <div class="eyebrow">Quick actions</div><h3>Make today easier.</h3>
+        <p>Copy your menu, send the ordering link, or close orders when you've reached capacity.</p>
+        <button class="admin-btn" style="margin:5px 5px 0 0" onclick="copyOrderLink()">Copy order link</button>
+        <button class="admin-btn" style="margin-top:5px" onclick="showToast('Orders closed for new customers.')">Close new orders</button>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="toast-v2" id="toastV2"></div>
+
+<script type="module">
+  import { supabase, supabaseUrlForFunctions } from './src/lib/supabase.js'
+  window.supabase = supabase
+  window.CHECKOUT_FUNCTION_URL = `${supabaseUrlForFunctions}/functions/v1/create-checkout-session`
+</script>
+
+<script>
+let kitchenAudioContext = null;
+let products = [];
+function showKitchenNewOrderAlert(order) {
+  playKitchenOrderSound();
+  const orderNumber = order?.order_number || "New order";
+  const total = Number(order?.total || 0);
+  const type = order?.order_type || "Order";
+  const time = order?.requested_time || "Not specified";
+
+  const existing = document.getElementById("kitchenNewAlert");
+
+  if (existing) {
+    existing.remove();
+  }
+
+  const alert = document.createElement("div");
+
+  alert.id = "kitchenNewAlert";
+  alert.className = "kitchen-new-alert";
+
+  alert.innerHTML = `
+    <div class="kna-icon">✓</div>
+
+    <div class="kna-content">
+      <div class="kna-eyebrow">New order received</div>
+
+      <strong>#${escapeHtml(orderNumber)}</strong>
+
+      <div class="kna-meta">
+        ${escapeHtml(type)} · ${escapeHtml(time)}
+        · £${total.toFixed(2)}
+      </div>
+    </div>
+
+    <button
+      class="kna-close"
+      onclick="document.getElementById('kitchenNewAlert')?.remove()"
+    >
+      ×
+    </button>
+  `;
+
+  document.body.appendChild(alert);
+
+  requestAnimationFrame(() => {
+    alert.classList.add("show");
+  });
+
+  setTimeout(() => {
+    alert.classList.remove("show");
+
+    setTimeout(() => {
+      alert.remove();
+    }, 300);
+  }, 7000);
+}
+async function loadMenuFromSupabase() {
+  const { data, error } = await window.supabase
+    .from('menu_items')
+    .select('id, name, description, price')
+    .eq('business_id', '944d4bd8-6533-4df2-82d8-b7107e4110cf')
+    .eq('active', true)
+    .eq('available', true)
+    .order('sort_order');
+
+  if (error) {
+    console.error('Failed to load Eatsbythia menu:', error);
+    return;
+  }
+
+  products = data.map(item => [
+  item.name,
+  Number(item.price),
+  item.description || 'Freshly prepared by Eatsbythia.',
+  item.id
+]);
+
+  console.log('Eatsbythia menu loaded:', products);
+  renderCustomerMenu();
+}
+function startCustomerMenuRealtime() {
+  if (!window.supabase) {
+    console.log("Customer menu realtime waiting for Supabase...");
+    setTimeout(startCustomerMenuRealtime, 300);
+    return;
+  }
+
+  window.supabase
+    .channel("eatsbythia-customer-menu")
+    .on(
+      "postgres_changes",
+      {
+        event: "*",
+        schema: "public",
+        table: "menu_items",
+        filter:
+          "business_id=eq.944d4bd8-6533-4df2-82d8-b7107e4110cf"
+      },
+      async (payload) => {
+        console.log("Customer menu update received:", payload);
+
+        await loadMenuFromSupabase();
+      }
+    )
+    .subscribe((status) => {
+      console.log("Customer menu realtime:", status);
+    });
+}
+window.addEventListener('DOMContentLoaded', loadMenuFromSupabase);
+window.addEventListener('DOMContentLoaded', handleStripeRedirect);
+
+function handleStripeRedirect() {
+  const params = new URLSearchParams(window.location.search);
+  const orderNumber = params.get("order");
+  const payment = params.get("payment");
+  if (!orderNumber || !payment) return;
+
+  // Clean the URL so refreshing doesn't re-trigger this
+  const cleanUrl = window.location.origin + window.location.pathname;
+  window.history.replaceState({}, document.title, cleanUrl);
+
+  if (payment === "success") {
+    localStorage.removeItem("eatsbythia_pending_order");
+    showToast("Payment received — confirming your order ✓");
+    showPlacedOrderStatus(orderNumber);
+  } else if (payment === "cancelled") {
+    showToast("Payment cancelled. Your basket wasn't charged — try again anytime.");
+  }
+}
+let activeFilter="new";
+let kitchenOrdersCache=[];
+const nextStatus={new:"confirmed",confirmed:"preparing",preparing:"ready",ready:"completed"};
+const statusLabel={new:"New",confirmed:"Confirmed",preparing:"Preparing",ready:"Ready",completed:"Completed"};
+
+function filterOrders(filter,btn){
+ activeFilter=filter;document.querySelectorAll(".filter").forEach(x=>x.classList.remove("active"));btn.classList.add("active");renderKitchenOrders();
+}
+function messageCustomer(orderNumber){
+ const o=kitchenOrdersCache.find(x=>x.id===orderNumber);
+ if(!o){showToast("Order not found.");return}
+ if(!o.phone){showToast("No WhatsApp number on file for this order.");return}
+ const itemList=(o.items||[]).map(x=>`${x.qty} × ${x.name}`).join(", ");
+ const label=statusLabel[o.status]||o.status;
+ const text=`Hi ${o.name}, this is Eatsbythia 🍛 Your order #${o.id} (${label}) — ${itemList} — total £${o.total.toFixed(2)}.`;
+ const digits=String(o.phone).replace(/\D/g,"").replace(/^0/,"44");
+ window.open(`https://wa.me/${digits}?text=${encodeURIComponent(text)}`,"_blank");
+}
+function copyOrderLink(){
+ navigator.clipboard?.writeText("https://eatsbythia.example/order").catch(()=>{});
+ showToast("Ordering link copied ✓");
+}
+
+function showToast(msg){
+ const t=document.getElementById("toastV2");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2200);
+}
+async function toggleAdmin() {
+  enableKitchenSound(); // capture the real click before any await
+
+  const customer = document.getElementById("customer");
+  const admin = document.getElementById("admin");
+  const login = document.getElementById("kitchenLogin");
+
+  if (!customer || !admin) return;
+
+  // If already in Kitchen, return to Customer
+  if (document.body.classList.contains("kitchen-mode")) {
+    document.body.classList.remove("kitchen-mode");
+
+    admin.classList.remove("show");
+    customer.style.display = "block";
+
+    window.scrollTo(0, 0);
+    return;
+  }
+
+  // Check Supabase authentication
+  const { data, error } = await window.supabase.auth.getSession();
+
+  if (error) {
+    console.error("Unable to check kitchen session:", error);
+    return;
+  }
+
+  // Not logged in → show login
+  if (!data.session) {
+    if (login) {
+      login.classList.add("show");
+
+      const email = document.getElementById("kitchenEmail");
+      if (email) email.focus();
+    }
+
+    return;
+  }
+
+  // Logged in → enter Kitchen
+  document.body.classList.add("kitchen-mode");
+
+  customer.style.display = "none";
+  admin.classList.add("show");
+
+  await renderKitchenOrders();
+  await renderAnalytics();
+
+  renderDishes();
+  renderMenuEditor();
+
+  window.scrollTo(0, 0);
+}
+
+function openAddDishForm() {
+  const form = document.getElementById("addDishForm");
+
+  if (!form) return;
+
+  form.style.display = "block";
+
+  document.getElementById("newDishName")?.focus();
+}
+
+function closeAddDishForm() {
+  const form = document.getElementById("addDishForm");
+
+  if (!form) return;
+
+  form.style.display = "none";
+
+  document.getElementById("newDishName").value = "";
+  document.getElementById("newDishPrice").value = "";
+  document.getElementById("newDishDescription").value = "";
+}
+
+async function saveNewDish() {
+  if (!window.supabase) {
+    console.error("Supabase is not ready.");
+    showToast("Please wait for Supabase to load.");
+    return;
+  }
+
+  const name = document.getElementById("newDishName")?.value.trim();
+  const price = Number(document.getElementById("newDishPrice")?.value);
+  const description =
+    document.getElementById("newDishDescription")?.value.trim();
+
+  if (!name) {
+    showToast("Enter a dish name.");
+    return;
+  }
+
+  if (!Number.isFinite(price) || price < 0) {
+    showToast("Enter a valid price.");
+    return;
+  }
+
+  const { data, error } = await window.supabase
+    .from("menu_items")
+    .insert({
+      business_id: "944d4bd8-6533-4df2-82d8-b7107e4110cf",
+      name,
+      description: description || "Freshly prepared by Eatsbythia.",
+      price,
+      available: true,
+      active: true,
+      sort_order: 999
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Failed to add dish:", error);
+    showToast("Unable to add dish.");
+    return;
+  }
+
+  console.log("Dish added:", data);
+
+  showToast("Dish added ✓");
+
+  closeAddDishForm();
+
+  await renderMenuEditor();
+}
+
+function openCheckout() {
+  const modal = document.getElementById("modal");
+
+  if (!modal) {
+    console.error("Checkout modal not found.");
+    return;
+  }
+
+  modal.classList.add("show");
+}
+async function placeOrder(){
+  const name = document.getElementById("name").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+
+  if(!name || !phone){
+    alert("Please add your name and WhatsApp number.");
+    return;
+  }
+
+  const type = document.getElementById("type").value;
+  const address = document.getElementById("address").value.trim();
+
+  if(type === "Delivery" && !address){
+    alert("Please add your delivery address.");
+    return;
+  }
+
+  const items = Object.entries(cart).map(([i, q]) => ({
+    menu_item_id: products[i][3],
+    name: products[i][0],
+    qty: q
+  }));
+
+  if(!items.length){
+    alert("Please add something to your order.");
+    return;
+  }
+
+  const placeBtn = document.getElementById("placeOrderBtn");
+  if (placeBtn) { placeBtn.disabled = true; placeBtn.textContent = "Redirecting to payment…"; }
+
+  let res, data;
+  try {
+    res = await fetch(window.CHECKOUT_FUNCTION_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        business_id: "944d4bd8-6533-4df2-82d8-b7107e4110cf",
+        customer_name: name,
+        whatsapp: phone,
+        order_type: type,
+        address,
+        requested_time: (document.getElementById("time")?.value) || "12:00–13:00",
+        items
+      })
+    });
+    data = await res.json();
+  } catch (err) {
+    console.error("Checkout request failed:", err);
+    alert("Sorry, we couldn't reach the payment service. Please try again.");
+    if (placeBtn) { placeBtn.disabled = false; placeBtn.textContent = "Pay & place order"; }
+    return;
+  }
+
+  if (!res.ok || !data.url) {
+    console.error("Failed to create checkout session:", data);
+    alert(data.error || "Sorry, we couldn't place your order. Please try again.");
+    if (placeBtn) { placeBtn.disabled = false; placeBtn.textContent = "Pay & place order"; }
+    return;
+  }
+
+  // Remember the order number so we can show status after payment
+  window.currentOrderId = data.orderNumber;
+  localStorage.setItem("eatsbythia_pending_order", data.orderNumber);
+
+  // Off to Stripe Checkout — the order is created but marked unpaid until
+  // Stripe confirms payment via webhook.
+  window.location.href = data.url;
+}
+const liveNext={new:"confirmed",confirmed:"preparing",preparing:"ready",ready:"completed"};
+
+async function updateOrder(id, status) {
+  if (!id || !status) return;
+
+  const { data, error } = await window.supabase
+    .from("orders")
+    .update({
+      status: status,
+      updated_at: new Date().toISOString()
+    })
+    .eq("id", id)
+    .eq(
+      "business_id",
+      "944d4bd8-6533-4df2-82d8-b7107e4110cf"
+    )
+    .select("id, order_number, status")
+    .single();
+
+  if (error) {
+    console.error("Failed to update order:", error);
+    showToast("Couldn't update order.");
+    return;
+  }
+
+  console.log("Eatsbythia order updated:", data);
+
+  showToast(
+    `${data.order_number} · ${
+      statusLabel[data.status] || data.status
+    } ✓`
+  );
+
+  await renderKitchenOrders();
+  await renderAnalytics();
+}
+function showCustomer() {
+  document.body.classList.remove("kitchen-mode");
+
+  const customer = document.getElementById("customer");
+  const admin = document.getElementById("admin");
+
+  if (customer) customer.style.display = "block";
+  if (admin) admin.classList.remove("show");
+
+  window.scrollTo(0, 0);
+}
+function startKitchenRealtime() {
+
+  if (!window.supabase) return;
+
+  window.supabase
+    .channel("eatsbythia-kitchen-orders")
+
+    .on(
+      "postgres_changes",
+      {
+        event: "INSERT",
+        schema: "public",
+        table: "orders",
+        filter:
+          "business_id=eq.944d4bd8-6533-4df2-82d8-b7107e4110cf"
+      },
+      async (payload) => {
+
+        console.log(
+          "🚨 NEW KITCHEN ORDER:",
+          payload.new
+        );
+
+        await renderKitchenOrders();
+        await renderAnalytics();
+
+        showKitchenNewOrderAlert(payload.new);
+
+      }
+    )
+
+    .on(
+      "postgres_changes",
+      {
+        event: "UPDATE",
+        schema: "public",
+        table: "orders",
+        filter:
+          "business_id=eq.944d4bd8-6533-4df2-82d8-b7107e4110cf"
+      },
+      async (payload) => {
+
+        console.log(
+          "Kitchen order update received:",
+          payload.new
+        );
+
+        await renderKitchenOrders();
+        await renderAnalytics();
+
+      }
+    )
+
+    .subscribe((status) => {
+
+      console.log(
+        "Kitchen realtime:",
+        status
+      );
+
+    });
+}
+
+// window.supabase is set by a type="module" script, which always runs
+// AFTER classic scripts like this one. Wait for it before subscribing,
+// otherwise this silently no-ops on most page loads.
+(function waitForSupabaseThenStartKitchenRealtime(){
+  if (window.supabase) { startKitchenRealtime(); return; }
+  const iv = setInterval(() => {
+    if (window.supabase) { clearInterval(iv); startKitchenRealtime(); }
+  }, 50);
+})();
+
+let customerOrderChannel = null;
+
+function enableKitchenSound() {
+  try {
+    const AudioContext =
+      window.AudioContext || window.webkitAudioContext;
+
+    if (!AudioContext) return;
+
+    if (!kitchenAudioContext) {
+      kitchenAudioContext = new AudioContext();
+    }
+
+    if (kitchenAudioContext.state === "suspended") {
+      kitchenAudioContext.resume();
+    }
+
+    console.log("Kitchen sound enabled.");
+  } catch (err) {
+    console.warn("Could not enable kitchen sound:", err);
+  }
+}
+
+function playKitchenOrderSound() {
+  try {
+    if (!kitchenAudioContext) return;
+
+    if (kitchenAudioContext.state === "suspended") {
+      kitchenAudioContext.resume();
+      return;
+    }
+
+    const oscillator = kitchenAudioContext.createOscillator();
+    const gain = kitchenAudioContext.createGain();
+
+    oscillator.type = "sine";
+
+    oscillator.frequency.setValueAtTime(
+      880,
+      kitchenAudioContext.currentTime
+    );
+
+    oscillator.frequency.setValueAtTime(
+      660,
+      kitchenAudioContext.currentTime + 0.12
+    );
+
+    gain.gain.setValueAtTime(
+      0.0001,
+      kitchenAudioContext.currentTime
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+      0.15,
+      kitchenAudioContext.currentTime + 0.02
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+      0.0001,
+      kitchenAudioContext.currentTime + 0.35
+    );
+
+    oscillator.connect(gain);
+    gain.connect(kitchenAudioContext.destination);
+
+    oscillator.start();
+    oscillator.stop(kitchenAudioContext.currentTime + 0.35);
+
+  } catch (err) {
+    console.warn("Kitchen notification sound unavailable:", err);
+  }
+}
+
+function startCustomerRealtime(orderNumber) {
+  if (!window.supabase || !orderNumber) return;
+
+  // Remove any previous customer listener
+  if (customerOrderChannel) {
+    window.supabase.removeChannel(customerOrderChannel);
+    customerOrderChannel = null;
+  }
+
+  customerOrderChannel = window.supabase
+    .channel(`eatsbythia-customer-order-${orderNumber}`)
+    .on(
+      "postgres_changes",
+      {
+        event: "UPDATE",
+        schema: "public",
+        table: "orders",
+        filter: `order_number=eq.${orderNumber}`
+      },
+      async (payload) => {
+        console.log(
+          "Customer order update received:",
+          payload.new
+        );
+
+        await lookupOrder();
+      }
+    )
+    .subscribe((status) => {
+      console.log("Customer realtime:", status);
+    });
+}
+
+async function renderKitchenOrders() {
+  const orderGrid = document.getElementById("orderGrid");
+  if (!orderGrid) return;
+
+  try {
+    // Get orders from Supabase
+    const { data: orders, error: ordersError } = await window.supabase
+      .from("orders")
+      .select(`
+        id,
+        order_number,
+        customer_id,
+        status,
+        payment_status,
+        order_type,
+        address,
+        requested_time,
+        total,
+        created_at
+      `)
+      .eq("business_id", "944d4bd8-6533-4df2-82d8-b7107e4110cf")
+      .eq("payment_status", "paid")
+      .order("created_at", { ascending: false });
+
+    if (ordersError) {
+      console.error("Failed to load kitchen orders:", ordersError);
+      orderGrid.innerHTML =
+        '<div class="menu-admin-card">Unable to load orders.</div>';
+      return;
+    }
+
+    if (!orders || !orders.length) {
+      orderGrid.innerHTML =
+        '<div class="menu-admin-card">No orders yet.</div>';
+
+      document.getElementById("kpiNew").textContent = "0";
+      document.getElementById("kpiTotal").textContent = "0";
+      document.getElementById("kpiReady").textContent = "0";
+      return;
+    }
+
+    // Get customer IDs
+    const customerIds = [
+      ...new Set(
+        orders
+          .map(o => o.customer_id)
+          .filter(Boolean)
+      )
+    ];
+
+    // Get customers
+    let customers = [];
+
+    if (customerIds.length) {
+      const { data, error } = await window.supabase
+        .from("customers")
+        .select("id, name, whatsapp")
+        .in("id", customerIds);
+
+      if (error) {
+        console.error("Failed to load customers:", error);
+      } else {
+        customers = data || [];
+      }
+    }
+
+    const customerMap = {};
+    customers.forEach(c => {
+      customerMap[c.id] = c;
+    });
+
+    // Get order items
+    const orderIds = orders.map(o => o.id);
+
+    const { data: orderItems, error: itemsError } = await window.supabase
+      .from("order_items")
+      .select(`
+        order_id,
+        name_snapshot,
+        unit_price,
+        quantity
+      `)
+      .in("order_id", orderIds);
+
+    if (itemsError) {
+      console.error("Failed to load order items:", itemsError);
+    }
+
+    const itemsMap = {};
+
+    (orderItems || []).forEach(item => {
+      if (!itemsMap[item.order_id]) {
+        itemsMap[item.order_id] = [];
+      }
+
+      itemsMap[item.order_id].push({
+        name: item.name_snapshot,
+        qty: Number(item.quantity),
+        price: Number(item.unit_price)
+      });
+    });
+
+    // Build the Kitchen order objects
+    const kitchenOrders = orders.map(o => {
+      const customer = customerMap[o.customer_id] || {};
+
+      return {
+        id: o.order_number,
+        dbId: o.id,
+        name: customer.name || "Customer",
+        phone: customer.whatsapp || "",
+        type: o.order_type,
+        address: o.address || "",
+        time: o.requested_time || "Not specified",
+        items: itemsMap[o.id] || [],
+        total: Number(o.total || 0),
+        status: o.status || "new",
+        createdAt: o.created_at
+      };
+    });
+
+    kitchenOrdersCache = kitchenOrders; // so messageCustomer() can look orders up by id
+
+    // Apply Kitchen filter — "all" really does mean all statuses
+    const list =
+  activeFilter === "all"
+    ? kitchenOrders
+    : kitchenOrders.filter(o => o.status === activeFilter);
+
+    if (!list.length) {
+      orderGrid.innerHTML =
+        '<div class="menu-admin-card">No orders in this view.</div>';
+    } else {
+      orderGrid.innerHTML = list.map(o => `
+        <article class="order-card ${o.status} ${o.status === "new" ? "order-new-highlight" : ""}">
+
+          <div class="order-top">
+            <div>
+              <div class="order-no">#${escapeHtml(o.id)}</div>
+              <div class="order-name">${escapeHtml(o.name)}</div>
+            </div>
+
+            <span class="status ${o.status}">
+              ${statusLabel[o.status] || o.status}
+            </span>
+          </div>
+
+          <div class="order-items">
+            ${o.items.length
+              ? o.items
+                  .map(x => `${x.qty} × ${escapeHtml(x.name)}`)
+                  .join("<br>")
+              : "No items found"}
+          </div>
+
+          <div class="order-meta">
+            🕐 ${escapeHtml(o.time)} · ${escapeHtml(o.type)}<br>
+            📍 ${
+              o.type === "delivery"
+                ? escapeHtml(o.address)
+                : "Collection"
+            }<br>
+            📱 ${escapeHtml(o.phone)}
+          </div>
+
+          <div class="order-bottom">
+            <span class="order-total">
+              £${o.total.toFixed(2)}
+            </span>
+
+            <div class="order-actions">
+
+              <button
+                class="oa"
+                onclick="messageCustomer('${escapeHtml(o.id)}')"
+              >
+                Message
+              </button>
+
+              ${
+                o.status !== "completed"
+                  ? `
+                    <button
+                      class="oa next"
+                      onclick="updateOrder('${o.dbId}', '${liveNext[o.status]}')"
+                    >
+                      ${
+                        o.status === "ready"
+                          ? "Complete"
+                          : "Mark " + (statusLabel[liveNext[o.status]] || liveNext[o.status])
+                      }
+                    </button>
+                  `
+                  : ""
+              }
+
+            </div>
+          </div>
+
+        </article>
+      `).join("");
+    }
+
+    // KPIs
+    document.getElementById("kpiNew").textContent =
+      kitchenOrders.filter(o => o.status === "new").length;
+
+    document.getElementById("kpiTotal").textContent =
+      kitchenOrders.length;
+
+    document.getElementById("kpiReady").textContent =
+      kitchenOrders.filter(o => o.status === "ready").length;
+
+  } catch (err) {
+    console.error("Kitchen order loading failed:", err);
+
+    orderGrid.innerHTML =
+      '<div class="menu-admin-card">Unable to load orders.</div>';
+  }
+}
+function renderCustomerStatus(order) {
+  if (!order) return;
+
+  const box = document.getElementById("customerStatus");
+  if (!box) return;
+
+  document.getElementById("customerOrderNo").textContent =
+    "ORDER #" + order.id;
+
+  document.getElementById("customerOrderName").textContent =
+    "Hi " + order.name;
+
+  const statusIndex = {
+    new: 0,
+    confirmed: 1,
+    preparing: 2,
+    ready: 3,
+    completed: 4
+  };
+
+  const idx = statusIndex[order.status] ?? 0;
+
+  document
+    .querySelectorAll("#customerTrack .track-step")
+    .forEach((step, i) => {
+      step.classList.toggle("on", i <= idx);
+    });
+
+  document
+    .querySelectorAll("#customerStatus .track-labels span")
+    .forEach((label, i) => {
+      label.classList.toggle("active", i <= idx);
+    });
+
+  const messages = {
+    new:
+      "Your order has been received. Fathia will confirm it shortly.",
+
+    confirmed:
+      "Your order has been confirmed by Fathia.",
+
+    preparing:
+      "Fathia is preparing your food now. 🍛",
+
+    ready:
+      "Your order is ready. See you soon!",
+
+    completed:
+      "Order completed. Thank you for ordering from Eatsbythia!"
+  };
+
+  document.getElementById("customerStatusMessage").textContent =
+    messages[order.status] || messages.new;
+
+  box.classList.add("show");
+}
+
+function showPlacedOrderStatus(orderNumber) {
+  closeOrderModal();
+
+  const input = document.getElementById("lookupInput");
+
+  if (input) {
+    input.value = orderNumber;
+  }
+
+  startCustomerRealtime(orderNumber);
+
+  lookupOrder();
+}
+function closeOrderModal(){document.getElementById("modal").classList.remove("show");window.scrollTo({top:0,behavior:"smooth"})}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+function setDemoMode(mode, btn) {
+  document
+    .querySelectorAll("#modeSwitch button")
+    .forEach(x => x.classList.remove("active"));
+
+  if (btn) {
+    btn.classList.add("active");
+  }
+
+  if (mode === "kitchen") {
+    toggleAdmin();
+  } else {
+    showCustomer();
+  }
+}
+
+
+async function loginKitchen(){
+  enableKitchenSound(); // capture the real click before any await
+
+  const email = document.getElementById("kitchenEmail").value.trim();
+  const password = document.getElementById("kitchenPassword").value;
+  const errorBox = document.getElementById("kitchenLoginError");
+
+  errorBox.textContent = "";
+
+  if(!email || !password){
+    errorBox.textContent = "Please enter your email and password.";
+    return;
+  }
+
+  const { data, error } = await window.supabase.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if(error){
+    console.error("Kitchen login failed:", error);
+    errorBox.textContent = error.message || "Unable to sign in.";
+    return;
+  }
+
+  console.log("Eatsbythia kitchen authenticated:", data.user);
+
+document.getElementById("kitchenEmail").value = "";
+document.getElementById("kitchenPassword").value = "";
+document.getElementById("kitchenLogin").classList.remove("show");
+
+document.body.classList.add("kitchen-mode");
+
+document.getElementById("customer").style.display = "none";
+document.getElementById("admin").classList.add("show");
+
+await renderKitchenOrders();
+await renderAnalytics();
+
+renderDishes();
+renderMenuEditor();
+
+window.scrollTo(0, 0);
+}
+function closeKitchenLogin(){
+  document.getElementById("kitchenLogin").classList.remove("show");
+  const errorBox = document.getElementById("kitchenLoginError");
+  if (errorBox) errorBox.textContent = "";
+}
+
+async function lookupOrder() {
+  const q = document
+    .getElementById("lookupInput")
+    .value
+    .trim()
+    .toUpperCase();
+
+  const box = document.getElementById("lookupResult");
+
+  if (!q) {
+    box.innerHTML =
+      '<div style="margin-top:12px;font-size:10px;color:#b4314c">Enter your order number first.</div>';
+    return;
+  }
+
+  const { data, error } = await window.supabase
+    .from("orders")
+    .select(`
+      id,
+      order_number,
+      status,
+      order_type,
+      address,
+      requested_time,
+      total,
+      created_at,
+      customers (
+        name,
+        whatsapp
+      ),
+      order_items (
+        name_snapshot,
+        unit_price,
+        quantity
+      )
+    `)
+    .eq(
+      "business_id",
+      "944d4bd8-6533-4df2-82d8-b7107e4110cf"
+    )
+    .eq("order_number", q)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Failed to find order:", error);
+
+    box.innerHTML =
+      '<div style="margin-top:12px;font-size:10px;color:#b4314c">We couldn’t look up that order right now.</div>';
+
+    return;
+  }
+
+  if (!data) {
+    box.innerHTML =
+      '<div style="margin-top:12px;font-size:10px;color:#b4314c">We couldn’t find that order. Check the order number and try again.</div>';
+
+    return;
+  }
+startCustomerRealtime(data.order_number);
+
+  const order = {
+    id: data.order_number,
+    name: data.customers?.name || "Customer",
+    phone: data.customers?.whatsapp || "",
+    type: data.order_type,
+    address: data.address || "",
+    time: data.requested_time || "Not specified",
+    total: Number(data.total),
+    status: data.status,
+    items: (data.order_items || []).map(item => ({
+      name: item.name_snapshot,
+      qty: item.quantity,
+      price: Number(item.unit_price)
+    })),
+    createdAt: new Date(data.created_at).getTime()
+  };
+
+  renderCustomerStatus(order);
+  document.getElementById("customerStatus")?.classList.add("show");
+  renderLookup(order);
+}
+let lastLookedUpOrder = null;
+function renderLookup(o){
+ lastLookedUpOrder = o;
+ const idx={new:0,confirmed:1,preparing:2,ready:3,completed:3}[o.status]??0;
+ const msg={new:"Waiting for Fathia to confirm.",confirmed:"Your order has been confirmed.",preparing:"Your food is being prepared. 🍛",ready:"Your order is ready.",completed:"This order has been completed."}[o.status];
+ document.getElementById("lookupResult").innerHTML=`<div class="receipt"><b>#${o.id} · ${statusLabel[o.status]}</b><div style="font-size:10px;color:#777;margin-top:5px">${msg}</div><div style="margin-top:10px;font-size:10px">${o.items.map(x=>`${x.qty} × ${escapeHtml(x.name)}`).join("<br>")}</div><div style="font-weight:800;margin-top:9px">£${o.total.toFixed(2)}</div><div class="receipt-actions"><button onclick="copyReceipt('${o.id}')">Copy order details</button></div></div>`;
+}
+function copyReceipt(id){
+ const o=lastLookedUpOrder && lastLookedUpOrder.id===id ? lastLookedUpOrder : null;
+ if(!o){showToast("Couldn't find that order.");return}
+ const text=`Eatsbythia Order #${o.id}\n${o.items.map(x=>`${x.qty} × ${x.name}`).join("\n")}\nTotal: £${o.total.toFixed(2)}\nStatus: ${statusLabel[o.status]}`;
+ navigator.clipboard?.writeText(text).catch(()=>{});
+ showToast("Order details copied ✓");
+}
+async function renderAnalytics() {
+  try {
+    const { data: orders, error } = await window.supabase
+      .from("orders")
+      .select("id, total")
+      .eq(
+        "business_id",
+        "944d4bd8-6533-4df2-82d8-b7107e4110cf"
+      );
+
+    if (error) {
+      console.error("Failed to load analytics:", error);
+      return;
+    }
+
+    const safeOrders = orders || [];
+
+    if (!safeOrders.length) {
+      document.getElementById("avgOrder").textContent = "£0.00";
+      document.getElementById("mealCount").textContent = "0";
+      document.getElementById("topDish").textContent = "—";
+      return;
+    }
+
+    const avg =
+      safeOrders.reduce(
+        (sum, order) => sum + Number(order.total || 0),
+        0
+      ) / safeOrders.length;
+
+    const orderIds = safeOrders.map(order => order.id);
+
+    const { data: items, error: itemsError } =
+      await window.supabase
+        .from("order_items")
+        .select("order_id, name_snapshot, quantity")
+        .in("order_id", orderIds);
+
+    if (itemsError) {
+      console.error(
+        "Failed to load analytics items:",
+        itemsError
+      );
+    }
+
+    const safeItems = items || [];
+
+    const meals = safeItems.reduce(
+      (sum, item) => sum + Number(item.quantity || 0),
+      0
+    );
+
+    const counts = {};
+
+    safeItems.forEach(item => {
+      const name = item.name_snapshot;
+
+      counts[name] =
+        (counts[name] || 0) +
+        Number(item.quantity || 0);
+    });
+
+    const top = Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])[0];
+
+    document.getElementById("avgOrder").textContent =
+      "£" + avg.toFixed(2);
+
+    document.getElementById("mealCount").textContent =
+      meals;
+
+    document.getElementById("topDish").textContent =
+      top ? top[0] : "—";
+
+  } catch (err) {
+    console.error("Analytics failed:", err);
+  }
+}
+const oldRenderKitchen=renderKitchenOrders;
+renderKitchenOrders=function(){oldRenderKitchen();renderAnalytics();};
+document.getElementById("lookupPanel").classList.add("show");
+
+
+function getMenu(){return JSON.parse(localStorage.getItem("eatsbythia_menu")||"null")||products.map(p=>[p[0],p[1],p[2],true])}
+function saveMenu(m){localStorage.setItem("eatsbythia_menu",JSON.stringify(m));renderCustomerMenu();renderMenuEditor()}
+function renderCustomerMenu(){
+ const m = products;
+const g = document.getElementById("menuGrid");
+
+g.innerHTML = m.map(p => `
+  <article class="item">
+    <div class="food">${escapeHtml(p[0])}</div>
+
+    <div class="body">
+      <div class="top">
+        <h3>${escapeHtml(p[0])}</h3>
+        <b>${p[1] > 0 ? "£" + Number(p[1]).toFixed(2) : "Price TBC"}</b>
+      </div>
+
+      <div class="desc">${escapeHtml(p[2])}</div>
+
+      <button
+        class="add"
+        onclick="addNamed('${encodeURIComponent(p[0])}', ${p[1]})"
+      >
+        Add to order +
+      </button>
+    </div>
+  </article>
+`).join("") || '<div class="empty-menu">No dishes are currently available.</div>';
+}
+function addNamed(n, p) {
+  if (!p) {
+    showToast("Fathia has not set a price for this dish yet.");
+    return;
+  }
+
+  const name = decodeURIComponent(n);
+  const i = products.findIndex(x => x[0] === name);
+
+  if (i < 0) {
+    showToast("Dish not found.");
+    return;
+  }
+
+  add(i);
+}
+function add(i) {
+  if (!cart[i]) {
+    cart[i] = 0;
+  }
+
+  cart[i] += 1;
+
+  renderCart();
+
+  document.getElementById("drawer").classList.add("show");
+}
+function renderCart() {
+  const cartEl = document.getElementById("cart");
+  const countEl = document.getElementById("count");
+
+  if (!cartEl || !countEl) return;
+
+  const entries = Object.entries(cart).filter(([i, q]) => q > 0);
+
+  const totalItems = entries.reduce((sum, [, q]) => sum + q, 0);
+
+  countEl.textContent = totalItems;
+
+  if (!entries.length) {
+    cartEl.innerHTML = `
+      <div class="empty-cart">
+        Your order is empty.
+      </div>
+    `;
+    return;
+  }
+
+  let orderTotal = 0;
+
+  const rows = entries.map(([i, q]) => {
+    const product = products[Number(i)];
+
+    if (!product) return "";
+
+    const name = product[0];
+    const price = Number(product[1]);
+    const itemTotal = price * q;
+
+    orderTotal += itemTotal;
+
+    return `
+      <div class="cart-row">
+        <div>
+          <b>${escapeHtml(name)}</b>
+          <div>£${price.toFixed(2)} × ${q}</div>
+        </div>
+
+        <div>
+          <b>£${itemTotal.toFixed(2)}</b>
+          <button onclick="removeFromCart(${i})">−</button>
+          <button onclick="add(${i})">+</button>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  cartEl.innerHTML = `
+    ${rows}
+
+    <div class="cart-total">
+      <span>Total</span>
+      <b>£${orderTotal.toFixed(2)}</b>
+    </div>
+
+    <button class="place" onclick="openCheckout()">
+      Continue →
+    </button>
+  `;
+}
+async function renderMenuEditor() {
+  const box = document.getElementById("menuEditorRows");
+
+  if (!box) return;
+
+  // Supabase may not be ready during the initial page load.
+  if (!window.supabase) {
+    console.log("Menu editor waiting for Supabase...");
+
+    // Try again shortly once Supabase has initialized.
+    setTimeout(renderMenuEditor, 300);
+    return;
+  }
+
+  const { data, error } = await window.supabase
+    .from("menu_items")
+    .select(`
+      id,
+      name,
+      price,
+      available,
+      active,
+      sort_order
+    `)
+    .eq(
+      "business_id",
+      "944d4bd8-6533-4df2-82d8-b7107e4110cf"
+    )
+    .order("sort_order");
+
+  if (error) {
+    console.error("Failed to load menu editor:", error);
+
+    box.innerHTML =
+      '<div style="font-size:10px;color:#b4314c">Unable to load menu.</div>';
+
+    return;
+  }
+
+  box.innerHTML = (data || []).map((dish, i) => `
+    <div class="editor-row">
+
+      <input
+        value="${escapeHtml(dish.name)}"
+        onchange="editDish('${dish.id}','name',this.value)"
+      >
+
+      <input
+        type="number"
+        value="${Number(dish.price).toFixed(2)}"
+        min="0"
+        step=".50"
+        onchange="editDish('${dish.id}','price',this.value)"
+      >
+
+      <button
+        class="${dish.available ? "avail" : "sold"}"
+        onclick="toggleDishMVPById('${dish.id}')"
+      >
+        ${dish.available ? "Available" : "Sold out"}
+      </button>
+
+      <button
+        onclick="removeDish('${dish.id}')"
+      >
+        Remove
+      </button>
+
+    </div>
+  `).join("");
+}
+async function editDish(menuItemId, field, value) {
+  if (!window.supabase) {
+    console.error("Supabase is not ready.");
+    return;
+  }
+
+  const updates = {};
+
+  if (field === "name") {
+    updates.name = value.trim();
+  }
+
+  if (field === "price") {
+    updates.price = Number(value);
+  }
+
+  if (Object.keys(updates).length === 0) {
+    console.error("Unknown menu field:", field);
+    return;
+  }
+
+  const { error } = await window.supabase
+    .from("menu_items")
+    .update(updates)
+    .eq("id", menuItemId)
+    .eq(
+      "business_id",
+      "944d4bd8-6533-4df2-82d8-b7107e4110cf"
+    );
+
+  if (error) {
+    console.error("Failed to update dish:", error);
+    showToast("Unable to update dish");
+    return;
+  }
+
+  console.log("Dish updated:", menuItemId, updates);
+  showToast("Dish updated ✓");
+
+  await renderMenuEditor();
+}
+async function toggleDishMVPById(menuItemId) {
+  const { data: dish, error: fetchError } = await window.supabase
+    .from("menu_items")
+    .select("id, name, available")
+    .eq("id", menuItemId)
+    .single();
+
+  if (fetchError || !dish) {
+    console.error("Failed to load menu item:", fetchError);
+    showToast("Couldn't update dish.");
+    return;
+  }
+
+  const newAvailability = !dish.available;
+
+  const { error: updateError } = await window.supabase
+    .from("menu_items")
+    .update({
+      available: newAvailability
+    })
+    .eq("id", menuItemId);
+
+  if (updateError) {
+    console.error("Failed to update dish availability:", updateError);
+    showToast("Couldn't update dish.");
+    return;
+  }
+
+  console.log(
+    `${dish.name} availability changed to:`,
+    newAvailability
+  );
+
+  showToast(
+    newAvailability
+      ? `${dish.name} available ✓`
+      : `${dish.name} marked sold out`
+  );
+
+  await renderMenuEditor();
+}
+async function toggleDishMVP(i) {
+  const dish = products[i];
+
+  if (!dish || !dish[3]) {
+    console.error("Could not identify menu item:", i, dish);
+    return;
+  }
+
+  const menuItemId = dish[3];
+
+  // Get the current availability directly from Supabase
+  const { data, error } = await window.supabase
+    .from("menu_items")
+    .select("id, name, available")
+    .eq("id", menuItemId)
+    .single();
+
+  if (error || !data) {
+    console.error("Failed to get menu item:", error);
+    showToast("Couldn't update dish.");
+    return;
+  }
+
+  const newAvailability = !data.available;
+
+  const { error: updateError } = await window.supabase
+    .from("menu_items")
+    .update({
+      available: newAvailability
+    })
+    .eq("id", menuItemId);
+
+  if (updateError) {
+    console.error("Failed to update dish availability:", updateError);
+    showToast("Couldn't update dish.");
+    return;
+  }
+
+  showToast(
+    newAvailability
+      ? "Dish available ✓"
+      : "Dish marked sold out"
+  );
+
+  // Refresh the editor from Supabase
+  await loadMenuFromSupabase();
+}
+async function addDish(name, price, description = "") {
+  if (!window.supabase) {
+    console.error("Supabase is not ready.");
+    return;
+  }
+
+  const { data, error } = await window.supabase
+    .from("menu_items")
+    .insert({
+      business_id: "944d4bd8-6533-4df2-82d8-b7107e4110cf",
+      name: name.trim(),
+      description: description.trim() || "Freshly prepared by Eatsbythia.",
+      price: Number(price),
+      available: true,
+      active: true,
+      sort_order: 999
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Failed to add dish:", error);
+    showToast("Unable to add dish");
+    return;
+  }
+
+  console.log("Dish added:", data);
+  showToast("Dish added ✓");
+
+  await renderMenuEditor();
+}
+async function removeDish(menuItemId) {
+  if (!window.supabase) {
+    console.error("Supabase is not ready.");
+    return;
+  }
+
+  const { error } = await window.supabase
+    .from("menu_items")
+    .update({ active: false })
+    .eq("id", menuItemId)
+    .eq(
+      "business_id",
+      "944d4bd8-6533-4df2-82d8-b7107e4110cf"
+    );
+
+  if (error) {
+    console.error("Failed to remove dish:", error);
+    showToast("Unable to remove dish");
+    return;
+  }
+
+  console.log("Dish deactivated:", menuItemId);
+  showToast("Dish removed ✓");
+
+  await renderMenuEditor();
+}
+function addDish(){const n=document.getElementById("newDish").value.trim(),p=Number(document.getElementById("newPrice").value);if(!n||!p){showToast("Add a dish name and price.");return}const m=getMenu();m.push([n,p,"Freshly prepared by Eatsbythia.",true]);saveMenu(m);document.getElementById("newDish").value="";document.getElementById("newPrice").value="";showToast("Dish added ✓")}
+function publishMenu(){saveMenu(getMenu());showToast("Today's menu published ✓")}
+renderCustomerMenu();renderMenuEditor();
+startCustomerMenuRealtime();
+</script>
+
+<div style="margin:18px 0;padding:16px;background:#f0edff;border:1px solid #ddd7fb;border-radius:13px;font:10px/1.6 system-ui;color:#5d51bf">
+<b>Eatsbythia production handoff</b><br>
+The next connection is a real Supabase database. This prototype is deliberately kept functional while the database layer is configured.
+</div>
+</body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "name": "eatsbythia_production_v1",
+  "version": "1.0.0",
+  "description": "This package is the handoff point between the prototype and the real hosted MVP.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.112.4"
+  },
+  "devDependencies": {
+    "vite": "^8.2.2"
+  }
+}
