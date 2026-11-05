@@ -73,22 +73,23 @@ Your project ref is the subdomain in your Supabase URL, e.g. for
 
 ```
 supabase secrets set STRIPE_SECRET_KEY=sk_test_your_key_here
-supabase secrets set SITE_URL=https://your-live-site-url.com
+supabase secrets set SITE_URL=https://your-username.github.io/eatsbythia
 ```
 
-(`SITE_URL` with no trailing slash — it's used to build the redirect links
+(`SITE_URL` must include `/eatsbythia` while the site is on GitHub Pages, with no trailing slash — it's used to build the redirect links
 Stripe sends customers back to.) `SUPABASE_URL` and
 `SUPABASE_SERVICE_ROLE_KEY` are already available automatically inside Edge
 Functions — you don't set those yourself.
 
-## 6. Deploy the two functions
+## 6. Deploy the three functions
 
 ```
 supabase functions deploy create-checkout-session --no-verify-jwt
 supabase functions deploy stripe-webhook --no-verify-jwt
+supabase functions deploy order-status --no-verify-jwt
 ```
 
-`--no-verify-jwt` is required for both — customers placing orders and
+`--no-verify-jwt` is required for all three — customers placing orders and
 Stripe's webhook calls are never logged-in Supabase users, so there's no
 Supabase JWT to verify.
 
@@ -133,16 +134,3 @@ Once everything above works in test mode:
    endpoint in live mode with its own signing secret).
 3. Re-test with a real card for a small amount before telling customers
    it's live.
-
-## Known follow-ups (not done in this pass)
-
-- **`addDish()` is defined twice** in `index.html` — an old localStorage
-  stub silently wins over the real Supabase-backed version, so adding a
-  dish from the kitchen UI doesn't currently persist. Worth fixing next.
-- **The "find my order" lookup** reads orders by order number under a
-  public Supabase policy that isn't in the checked-in schema file. Order
-  numbers are only 3 random digits (`ETB-100`–`ETB-999`) — that's a small
-  enough space to enumerate, which would expose every customer's name,
-  WhatsApp number, and address to anyone who tried. Worth tightening
-  (e.g. a narrower RPC that returns less, and/or longer order numbers)
-  once we have the real current policy to work from.

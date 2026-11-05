@@ -13,7 +13,7 @@
 //   STRIPE_WEBHOOK_SECRET  whsec_... — from the Stripe Dashboard webhook
 //                          you create pointing at this function's URL
 
-import Stripe from "npm:stripe@17?target=deno";
+import Stripe from "npm:stripe@17";
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, {
@@ -47,7 +47,8 @@ Deno.serve(async (req) => {
   }
 
   try {
-    switch (event.type) {      case "checkout.session.completed": {
+    switch (event.type) {
+      case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
         const orderId = session.metadata?.order_id;
         if (orderId) {
@@ -63,7 +64,7 @@ Deno.serve(async (req) => {
             })
             .eq("id", orderId)
             .eq("payment_status", "pending"); // don't re-mark a refunded order paid
-          if (error) console.error("Failed to mark order paid:", error);
+          if (error) throw error;
         }
         break;
       }
@@ -72,11 +73,12 @@ Deno.serve(async (req) => {
         const session = event.data.object as Stripe.Checkout.Session;
         const orderId = session.metadata?.order_id;
         if (orderId) {
-          await supabaseAdmin
+          const { error } = await supabaseAdmin
             .from("orders")
             .update({ payment_status: "failed", status: "cancelled" })
             .eq("id", orderId)
             .eq("payment_status", "pending");
+          if (error) throw error;
         }
         break;
       }
@@ -88,10 +90,11 @@ Deno.serve(async (req) => {
             ? charge.payment_intent
             : charge.payment_intent?.id;
         if (paymentIntentId) {
-          await supabaseAdmin
+          const { error } = await supabaseAdmin
             .from("orders")
             .update({ payment_status: "refunded" })
             .eq("stripe_payment_intent_id", paymentIntentId);
+          if (error) throw error;
         }
         break;
       }

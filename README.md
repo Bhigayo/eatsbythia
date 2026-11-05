@@ -1,41 +1,32 @@
-# Eatsbythia Production V1
+# Eatsbythia
 
-This package is the handoff point between the prototype and the real hosted MVP.
+Online ordering and a live kitchen dashboard for Eatsbythia, a home-based Nigerian food business in Manchester.
 
-## Architecture
+Customers order and pay by card. Paid orders appear on Fathia's dashboard straight away, and customers can track their order.
 
-Customer browser
-→ hosted Eatsbythia frontend
-→ Supabase database
-→ Fathia Kitchen dashboard
+## How it works
 
-WhatsApp remains the communication layer.
+- **Website:** a Vite single-page site hosted on GitHub Pages
+- **Database and login:** Supabase, with row-level security
+- **Payments:** Stripe Checkout, confirmed by a signed webhook
+- **Server functions:** `create-checkout-session`, `stripe-webhook` and `order-status`
 
-## What is already designed
+The browser can only read the public menu and whether orders are open. Customer and order data is available only to signed-in kitchen staff, or through `order-status` to someone who proves the order is theirs.
 
-- Customer menu
-- Basket and checkout
-- WhatsApp number captured with order
-- Order number
-- Order status lifecycle
-- Fathia kitchen dashboard
-- Daily menu management
-- Manchester delivery/collection context
+## Run it locally
 
-## What must happen before live launch
+1. Copy `.env.example` to `.env.local` and add your Supabase details.
+2. Run `npm install`, then `npm run dev`.
 
-1. Create a Supabase project.
-2. Run `supabase_schema.sql`.
-3. Create Fathia's authenticated user.
-4. Create the Eatsbythia business row and save its UUID.
-5. Add the Supabase URL, publishable key and business UUID to environment variables.
-6. Replace the prototype's localStorage repository with Supabase calls.
-7. Add secured RLS policies for Fathia's business membership.
-8. Test customer phone → database → Fathia phone.
-9. Connect the production domain.
-10. Give Fathia the ordering link.
+## Set up or update the live system
 
-## Important
+1. Run `supabase_schema.sql` and `supabase_schema_v2_payments.sql` if you haven't already.
+2. Add Fathia's login email to `supabase_schema_v3_security.sql`, then run it in the Supabase SQL Editor.
+3. In Supabase, go to Authentication and turn off new sign-ups.
+4. Follow `PAYMENTS_SETUP.md` to set secrets and deploy all three functions.
+5. Push to `main` to deploy the website. Do this after step 2, because the site needs the new columns.
+6. Add allergens for every dish in the kitchen dashboard.
+7. Fill in the bracketed details in `public/privacy.html`.
+8. Test a full order in Stripe test mode, then go live.
 
-The public client must never receive a Supabase service-role key.
-Prices should be recalculated server-side before an order is accepted in the production implementation.
+Never put the Supabase service-role key or the Stripe secret key in the website code.

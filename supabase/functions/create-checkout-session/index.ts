@@ -16,7 +16,7 @@
 // SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are provided automatically by
 // the Supabase Edge Function runtime — you don't need to set those.
 
-import Stripe from "npm:stripe@17?target=deno";
+import Stripe from "npm:stripe@17";
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, {
@@ -29,6 +29,16 @@ const supabaseAdmin = createClient(
 );
 
 const SITE_URL = Deno.env.get("SITE_URL")!;
+
+// The server decides whether orders are open. Times are always UK time.
+function londonTimeNow() {
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/London",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).format(new Date());
+}
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -82,6 +92,23 @@ Deno.serve(async (req) => {
     return json({ error: "A delivery address is required." }, 400);
   }
 
+  const { data: business, error: businessError } = await supabaseAdmin
+    .from("businesses")
+    .select("accepting_orders, order_cutoff")
+    .eq("id", business_id)
+    .maybeSingle();
+
+  if (businessError || !business) {
+    console.error("Could not load business:", businessError);
+    return json({ error: "Sorry, we can't take orders right now." }, 400);
+  }
+  if (
+    !business.accepting_orders ||
+    londonTimeNow() >= String(business.order_cutoff).slice(0, 5)
+  ) {
+    return json({ error: "Sorry, orders are closed for today." }, 409);
+  }
+
   // 1. Create the order using the same RPC the site already trusted for
   // server-side price validation — just now called with the service_role
   // key instead of directly from the browser.
@@ -116,7 +143,7 @@ Deno.serve(async (req) => {
   // line items — never trust anything the browser sent for pricing.
   const { data: order, error: fetchError } = await supabaseAdmin
     .from("orders")
-    .select("id, total, order_items(name_snapshot, unit_price, quantity)")
+    .select("id, total, tracking_token, order_items(name_snapshot, unit_price, quantity)")
     .eq("business_id", business_id)
     .eq("order_number", orderNumber)
     .single();
@@ -147,12 +174,15 @@ Deno.serve(async (req) => {
       payment_method_types: ["card"],
       line_items: lineItems,
       customer_email: undefined, // we only collect WhatsApp, not email
+      // Stripe's shortest allowed window is 30 minutes. An unpaid order is
+      // cancelled by the webhook when this expires.
+      expires_at: Math.floor(Date.now() / 1000) + 31 * 60,
       metadata: {
         order_id: order.id,
         order_number: orderNumber,
         business_id,
       },
-      success_url: `${SITE_URL}/?order=${orderNumber}&payment=success`,
+      success_url: `${SITE_URL}/?order=${orderNumber}&payment=success&token=${order.tracking_token}`,
       cancel_url: `${SITE_URL}/?order=${orderNumber}&payment=cancelled`,
     });
   } catch (err) {

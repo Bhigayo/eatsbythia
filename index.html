@@ -263,16 +263,17 @@ body.kitchen-mode #admin {
 #kitchenLogin.show {
   display: flex;
 }
+.allergy-note{font-size:11px;line-height:1.6;color:#666;margin:16px 0 0}
+.legal-links{font-size:10px;color:#777;margin:10px 0 0}.legal-links a{color:inherit}
+.dish-allergens{font-size:10px;line-height:1.5;color:#666;margin:7px 0 0}
+.editor-allergens{grid-column:1/-1}
+.place:disabled{opacity:.5;cursor:not-allowed}
+.lookup input{min-width:0}
 </style>
 </head>
 <body>
 <div class="customer" id="customer"><div class="wrap">
-<div class="mode-switch" id="modeSwitch">
- <button class="active" onclick="setDemoMode('customer',this)">Customer</button>
- <button onclick="setDemoMode('kitchen',this)">Fathia's Kitchen</button>
-</div>
-
-<div class="mvpbar"><span class="mvpbadge">Eatsbythia MVP</span><span class="note">Manchester & surrounding areas</span></div><header><img class="logo" src="ebt.png" alt="Eatsbythia"><button class="story" onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">Today's menu ↓</button></header>
+<div class="mvpbar"><span class="note">Manchester & surrounding areas</span></div><header><img class="logo" src="ebt.png" alt="Eatsbythia"><button class="story" onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">Today's menu ↓</button></header>
 
 <section class="customer-status" id="customerStatus">
   <div class="cs-top">
@@ -302,14 +303,14 @@ body.kitchen-mode #admin {
 <div><div class="eyebrow">Home-cooked Nigerian food</div><h1>Good food.<br><em>Made with love.</em></h1><p>Freshly prepared by Eatsbythia. Choose what you want, tell us where and when, and we'll take it from there.</p></div>
 <div class="hero-art"><img src="ebt.png" alt=""></div>
 </section>
-<div class="live-order-banner">Orders are sent straight to Eatsbythia’s kitchen. No payment is needed at checkout.</div>
+<div class="live-order-banner" id="orderBanner">Pay securely by card. Your order goes straight to Eatsbythia’s kitchen.</div>
 <div class="account-panel" id="lookupPanel">
   <div class="eyebrow">Find an order</div>
   <div style="font-size:16px;font-weight:800;margin-top:5px">Already ordered?</div>
-  <div class="lookup"><input id="lookupInput" placeholder="Order number, e.g. ETB-241"><button onclick="lookupOrder()">Find order</button></div>
+  <div class="lookup"><input id="lookupInput" placeholder="Order number, e.g. ETB-241"><input id="lookupPhone" type="tel" placeholder="WhatsApp number on the order"><button onclick="lookupOrder()">Find order</button></div>
   <div id="lookupResult"></div>
 </div>
-<section id="menu"><div class="menu-head"><div><div class="eyebrow">Today's menu</div><h2>What's cooking?</h2></div><div class="note">Orders close at 6:00 PM</div></div><div class="menu" id="menuGrid"></div></section>
+<section id="menu"><div class="menu-head"><div><div class="eyebrow">Today's menu</div><h2>What's cooking?</h2></div><div class="note" id="cutoffNote">Orders close at 6:00 PM</div></div><div class="menu" id="menuGrid"></div><p class="allergy-note">Have an allergy or dietary need? Please check with Eatsbythia before ordering. Our food is made in a home kitchen, so we can’t guarantee any dish is allergen free.</p><p class="legal-links"><a href="privacy.html">Privacy notice</a></p></section>
 </div></div>
 <div class="drawer" id="drawer">
   <div class="dh">
@@ -324,7 +325,7 @@ body.kitchen-mode #admin {
 
   <div class="cart" id="cart"></div>
 </div><div class="modal" id="modal"><div class="modal-card" id="modalCard">
-  <button class="modal-close" onclick="document.getElementById('modal').classList.remove('show')">×</button><div class="eyebrow">Eatsbythia · Your order</div><h2>Where should we send it?</h2><div class="field"><label>Name</label><input id="name" placeholder="Your name"></div><div class="field"><label>Phone / WhatsApp</label><input id="phone" placeholder="07..."></div><div class="field"><label>Order type</label><select id="type"><option>Delivery</option><option>Collection</option></select></div><div class="field" id="addr"><label>Delivery address</label><input id="address" placeholder="Your address"></div><div class="field"><label>Preferred time</label><select id="time"><option>12:00–13:00</option><option>13:00–14:00</option><option>14:00–15:00</option><option>15:00–16:00</option><option>16:00–17:00</option><option>17:00–18:00</option></select></div><button class="place" id="placeOrderBtn" onclick="placeOrder()">Pay & place order</button></div></div>
+  <button class="modal-close" onclick="document.getElementById('modal').classList.remove('show')">×</button><div class="eyebrow">Eatsbythia · Your order</div><h2>Where should we send it?</h2><div class="field"><label>Name</label><input id="name" placeholder="Your name"></div><div class="field"><label>Phone / WhatsApp</label><input id="phone" placeholder="07..."></div><div class="field"><label>Order type</label><select id="type"><option>Delivery</option><option>Collection</option></select></div><div class="field" id="addr"><label>Delivery address</label><input id="address" placeholder="Your address"></div><div class="field"><label>Preferred time</label><select id="time"><option>12:00–13:00</option><option>13:00–14:00</option><option>14:00–15:00</option><option>15:00–16:00</option><option>16:00–17:00</option><option>17:00–18:00</option></select></div><button class="place" id="placeOrderBtn" onclick="placeOrder()">Pay & place order</button><p class="legal-links">By ordering, you agree that we’ll use your details as set out in our <a href="privacy.html">privacy notice</a>.</p></div></div>
 
   </div>
 </div>
@@ -394,22 +395,22 @@ body.kitchen-mode #admin {
         <button class="admin-btn" onclick="showCustomer()">
   ← Customer view
 </button>
-        <button class="admin-btn primary" onclick="showToast('Menu saved for today ✓')">Save menu</button>
+        
       </div>
     </div>
 
     <div class="admin-title">
-      <div class="eyebrow">Kitchen dashboard · Monday 24 August</div>
-      <h1>Good morning, Fathia.</h1>
+      <div class="eyebrow" id="adminDate">Kitchen dashboard</div>
+      <h1 id="adminGreeting">Hello, Fathia.</h1>
       <div class="note">Everything for today's orders, in one place.</div>
       <div class="sync-note">Live orders from Eatsbythia's kitchen database, updated automatically.</div>
     </div>
 
     <div class="stats-row">
-      <div class="kpi"><span>New orders</span><strong id="kpiNew">4</strong></div>
-      <div class="kpi"><span>Today's orders</span><strong id="kpiTotal">17</strong></div>
-      <div class="kpi"><span>Expected sales</span><strong>£186</strong></div>
-      <div class="kpi"><span>Ready</span><strong id="kpiReady">6</strong></div>
+      <div class="kpi"><span>New orders</span><strong id="kpiNew">0</strong></div>
+      <div class="kpi"><span>Today's orders</span><strong id="kpiTotal">0</strong></div>
+      <div class="kpi"><span>Today's sales</span><strong id="kpiSales">£0.00</strong></div>
+      <div class="kpi"><span>Ready</span><strong id="kpiReady">0</strong></div>
     </div>
 
     <div class="orders-head">
@@ -436,7 +437,7 @@ body.kitchen-mode #admin {
 <div class="menu-editor">
 <div class="eyebrow">Menu control</div>
 <h3 style="margin:6px 0 12px">Today's Eatsbythia menu</h3>
-<div style="font-size:9px;color:#777;line-height:1.6">Fathia can change prices, mark dishes sold out, add dishes, and publish the menu without touching the website code.</div>
+<div style="font-size:9px;color:#777;line-height:1.6">Changes appear on the menu straight away. Keep the allergens up to date for every dish.</div>
 <div id="menuEditorRows"></div>
 <button
   type="button"
@@ -467,6 +468,12 @@ body.kitchen-mode #admin {
     placeholder="Description"
   >
 
+  <input
+    id="newDishAllergens"
+    type="text"
+    placeholder="Allergens, e.g. peanuts, fish, celery"
+  >
+
   <div class="add-dish-actions">
     <button type="button" onclick="saveNewDish()">
       Add Dish
@@ -477,15 +484,13 @@ body.kitchen-mode #admin {
     </button>
   </div>
 </div>
-<div class="adddish"><input id="newDish" placeholder="New dish name"><input id="newPrice" type="number" min="0" step=".50" placeholder="Price"><button onclick="addDish()">+ Add dish</button></div>
-<button class="admin-btn primary" style="margin-top:10px" onclick="publishMenu()">Publish today's menu</button>
 </div>
 <div class="menu-admin">
       <div class="menu-admin-card">
         <div class="eyebrow">Quick actions</div><h3>Make today easier.</h3>
         <p>Copy your menu, send the ordering link, or close orders when you've reached capacity.</p>
         <button class="admin-btn" style="margin:5px 5px 0 0" onclick="copyOrderLink()">Copy order link</button>
-        <button class="admin-btn" style="margin-top:5px" onclick="showToast('Orders closed for new customers.')">Close new orders</button>
+        <button class="admin-btn" id="toggleOrdersBtn" style="margin-top:5px" onclick="toggleAcceptingOrders()">Close new orders</button>
       </div>
     </div>
   </div>
@@ -496,11 +501,19 @@ body.kitchen-mode #admin {
   import { supabase, supabaseUrlForFunctions } from './src/lib/supabase.js'
   window.supabase = supabase
   window.CHECKOUT_FUNCTION_URL = `${supabaseUrlForFunctions}/functions/v1/create-checkout-session`
+  window.ORDER_STATUS_FUNCTION_URL = `${supabaseUrlForFunctions}/functions/v1/order-status`
 </script>
 
 <script>
 let kitchenAudioContext = null;
+const BUSINESS_ID = "944d4bd8-6533-4df2-82d8-b7107e4110cf";
 let products = [];
+let cart = {}; // dish id -> quantity
+let orderingState = { accepting: true, cutoff: "18:00" };
+let trackedOrder = null; // { orderNumber, token, whatsapp }
+let trackTimer = null;
+const TRACKING_KEY = "eatsbythia_tracked_order";
+const alertedOrders = new Set();
 function showKitchenNewOrderAlert(order) {
   playKitchenOrderSound();
   const orderNumber = order?.order_number || "New order";
@@ -558,7 +571,7 @@ function showKitchenNewOrderAlert(order) {
 async function loadMenuFromSupabase() {
   const { data, error } = await window.supabase
     .from('menu_items')
-    .select('id, name, description, price')
+    .select('id, name, description, price, allergens')
     .eq('business_id', '944d4bd8-6533-4df2-82d8-b7107e4110cf')
     .eq('active', true)
     .eq('available', true)
@@ -573,11 +586,17 @@ async function loadMenuFromSupabase() {
   item.name,
   Number(item.price),
   item.description || 'Freshly prepared by Eatsbythia.',
-  item.id
+  item.id,
+  item.allergens || ''
 ]);
 
-  console.log('Eatsbythia menu loaded:', products);
+  const stillOnMenu = new Set(products.map(p => p[3]));
+  const removed = Object.keys(cart).filter(id => !stillOnMenu.has(id));
+  removed.forEach(id => delete cart[id]);
+  if (removed.length) showToast("A dish in your order just sold out.");
+
   renderCustomerMenu();
+  renderCart();
 }
 function startCustomerMenuRealtime() {
   if (!window.supabase) {
@@ -609,29 +628,161 @@ function startCustomerMenuRealtime() {
 }
 window.addEventListener('DOMContentLoaded', loadMenuFromSupabase);
 window.addEventListener('DOMContentLoaded', handleStripeRedirect);
+window.addEventListener('DOMContentLoaded', loadOrderingState);
+setInterval(loadOrderingState, 60000);
 
 function handleStripeRedirect() {
   const params = new URLSearchParams(window.location.search);
   const orderNumber = params.get("order");
   const payment = params.get("payment");
-  if (!orderNumber || !payment) return;
+  const token = params.get("token");
+
+  if (!orderNumber || !payment) {
+    resumeTrackedOrder();
+    return;
+  }
 
   // Clean the URL so refreshing doesn't re-trigger this
   const cleanUrl = window.location.origin + window.location.pathname;
   window.history.replaceState({}, document.title, cleanUrl);
 
-  if (payment === "success") {
-    localStorage.removeItem("eatsbythia_pending_order");
-    showToast("Payment received — confirming your order ✓");
-    showPlacedOrderStatus(orderNumber);
+  if (payment === "success" && token) {
+    showToast("Payment received ✓");
+    showPlacedOrderStatus(orderNumber, token);
   } else if (payment === "cancelled") {
-    showToast("Payment cancelled. Your basket wasn't charged — try again anytime.");
+    showToast("Payment cancelled. You haven't been charged.");
   }
+}
+
+function saveTrackedOrder() {
+  try {
+    if (trackedOrder?.token) {
+      localStorage.setItem(TRACKING_KEY, JSON.stringify({
+        orderNumber: trackedOrder.orderNumber,
+        token: trackedOrder.token
+      }));
+    }
+  } catch (err) {}
+}
+
+function clearTrackedOrder() {
+  try { localStorage.removeItem(TRACKING_KEY); } catch (err) {}
+}
+
+function resumeTrackedOrder() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(TRACKING_KEY) || "null");
+    if (saved?.orderNumber && saved?.token) {
+      showPlacedOrderStatus(saved.orderNumber, saved.token);
+    }
+  } catch (err) {}
+}
+
+// ---------- Opening hours ----------
+function ukTimeNow() {
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/London",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23"
+  }).format(new Date());
+}
+
+function isOrderingOpen() {
+  return orderingState.accepting && ukTimeNow() < orderingState.cutoff;
+}
+
+function formatCutoff(cutoff) {
+  const [h, m] = cutoff.split(":").map(Number);
+  const hour12 = h % 12 || 12;
+  return `${hour12}:${String(m).padStart(2, "0")} ${h < 12 ? "AM" : "PM"}`;
+}
+
+async function loadOrderingState() {
+  if (!window.supabase) return;
+
+  const { data, error } = await window.supabase
+    .from("businesses")
+    .select("accepting_orders, order_cutoff")
+    .eq("id", BUSINESS_ID)
+    .maybeSingle();
+
+  if (error || !data) {
+    console.error("Failed to load ordering status:", error);
+    return;
+  }
+
+  orderingState = {
+    accepting: data.accepting_orders,
+    cutoff: String(data.order_cutoff).slice(0, 5)
+  };
+  renderOrderingState();
+}
+
+function renderOrderingState() {
+  const open = isOrderingOpen();
+  const note = document.getElementById("cutoffNote");
+  const banner = document.getElementById("orderBanner");
+  const placeBtn = document.getElementById("placeOrderBtn");
+  const toggle = document.getElementById("toggleOrdersBtn");
+
+  if (note) {
+    note.textContent = open
+      ? `Orders close at ${formatCutoff(orderingState.cutoff)}`
+      : "Orders are closed";
+  }
+  if (banner) {
+    banner.textContent = open
+      ? "Pay securely by card. Your order goes straight to Eatsbythia’s kitchen."
+      : "We’re not taking orders right now. Please check back soon.";
+  }
+  if (placeBtn) placeBtn.disabled = !open;
+  if (toggle) {
+    toggle.textContent = orderingState.accepting
+      ? "Close new orders"
+      : "Reopen orders";
+  }
+
+  // A slot that has already started can't be chosen
+  const slot = document.getElementById("time");
+  if (slot) {
+    const now = ukTimeNow();
+    [...slot.options].forEach(option => {
+      option.disabled = option.textContent.slice(0, 5) <= now;
+    });
+    if (slot.selectedOptions[0]?.disabled) {
+      const next = [...slot.options].find(option => !option.disabled);
+      if (next) slot.value = next.value;
+    }
+  }
+
+  document.querySelectorAll("#menuGrid .add").forEach(button => {
+    button.disabled = !open;
+  });
+}
+
+async function toggleAcceptingOrders() {
+  const accepting = !orderingState.accepting;
+
+  const { error } = await window.supabase
+    .from("businesses")
+    .update({ accepting_orders: accepting })
+    .eq("id", BUSINESS_ID);
+
+  if (error) {
+    console.error("Failed to change ordering status:", error);
+    showToast("Couldn't change that. Please try again.");
+    return;
+  }
+
+  orderingState.accepting = accepting;
+  renderOrderingState();
+  showToast(accepting ? "Orders reopened ✓" : "New orders closed ✓");
 }
 let activeFilter="new";
 let kitchenOrdersCache=[];
 const nextStatus={new:"confirmed",confirmed:"preparing",preparing:"ready",ready:"completed"};
-const statusLabel={new:"New",confirmed:"Confirmed",preparing:"Preparing",ready:"Ready",completed:"Completed"};
+const statusLabel={new:"New",confirmed:"Confirmed",preparing:"Preparing",ready:"Ready",completed:"Completed",cancelled:"Cancelled"};
 
 function filterOrders(filter,btn){
  activeFilter=filter;document.querySelectorAll(".filter").forEach(x=>x.classList.remove("active"));btn.classList.add("active");renderKitchenOrders();
@@ -647,7 +798,7 @@ function messageCustomer(orderNumber){
  window.open(`https://wa.me/${digits}?text=${encodeURIComponent(text)}`,"_blank");
 }
 function copyOrderLink(){
- navigator.clipboard?.writeText("https://eatsbythia.example/order").catch(()=>{});
+ navigator.clipboard?.writeText(window.location.origin + window.location.pathname).catch(()=>{});
  showToast("Ordering link copied ✓");
 }
 
@@ -700,11 +851,11 @@ async function toggleAdmin() {
   customer.style.display = "none";
   admin.classList.add("show");
 
+  renderKitchenHeader();
+  await loadOrderingState();
   await renderKitchenOrders();
   await renderAnalytics();
-
-  renderDishes();
-  renderMenuEditor();
+  await renderMenuEditor();
 
   window.scrollTo(0, 0);
 }
@@ -729,6 +880,7 @@ function closeAddDishForm() {
   document.getElementById("newDishName").value = "";
   document.getElementById("newDishPrice").value = "";
   document.getElementById("newDishDescription").value = "";
+  document.getElementById("newDishAllergens").value = "";
 }
 
 async function saveNewDish() {
@@ -742,6 +894,8 @@ async function saveNewDish() {
   const price = Number(document.getElementById("newDishPrice")?.value);
   const description =
     document.getElementById("newDishDescription")?.value.trim();
+  const allergens =
+    document.getElementById("newDishAllergens")?.value.trim();
 
   if (!name) {
     showToast("Enter a dish name.");
@@ -759,6 +913,7 @@ async function saveNewDish() {
       business_id: "944d4bd8-6533-4df2-82d8-b7107e4110cf",
       name,
       description: description || "Freshly prepared by Eatsbythia.",
+      allergens: allergens || "",
       price,
       available: true,
       active: true,
@@ -783,6 +938,11 @@ async function saveNewDish() {
 }
 
 function openCheckout() {
+  if (!isOrderingOpen()) {
+    showToast("Sorry, orders are closed right now.");
+    return;
+  }
+
   const modal = document.getElementById("modal");
 
   if (!modal) {
@@ -809,11 +969,13 @@ async function placeOrder(){
     return;
   }
 
-  const items = Object.entries(cart).map(([i, q]) => ({
-    menu_item_id: products[i][3],
-    name: products[i][0],
-    qty: q
-  }));
+  const items = Object.entries(cart)
+    .filter(([, qty]) => qty > 0)
+    .map(([id, qty]) => ({
+      menu_item_id: id,
+      name: products.find(p => p[3] === id)?.[0] || "",
+      qty
+    }));
 
   if(!items.length){
     alert("Please add something to your order.");
@@ -829,7 +991,7 @@ async function placeOrder(){
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        business_id: "944d4bd8-6533-4df2-82d8-b7107e4110cf",
+        business_id: BUSINESS_ID,
         customer_name: name,
         whatsapp: phone,
         order_type: type,
@@ -852,10 +1014,6 @@ async function placeOrder(){
     if (placeBtn) { placeBtn.disabled = false; placeBtn.textContent = "Pay & place order"; }
     return;
   }
-
-  // Remember the order number so we can show status after payment
-  window.currentOrderId = data.orderNumber;
-  localStorage.setItem("eatsbythia_pending_order", data.orderNumber);
 
   // Off to Stripe Checkout — the order is created but marked unpaid until
   // Stripe confirms payment via webhook.
@@ -918,30 +1076,6 @@ function startKitchenRealtime() {
     .on(
       "postgres_changes",
       {
-        event: "INSERT",
-        schema: "public",
-        table: "orders",
-        filter:
-          "business_id=eq.944d4bd8-6533-4df2-82d8-b7107e4110cf"
-      },
-      async (payload) => {
-
-        console.log(
-          "🚨 NEW KITCHEN ORDER:",
-          payload.new
-        );
-
-        await renderKitchenOrders();
-        await renderAnalytics();
-
-        showKitchenNewOrderAlert(payload.new);
-
-      }
-    )
-
-    .on(
-      "postgres_changes",
-      {
         event: "UPDATE",
         schema: "public",
         table: "orders",
@@ -957,6 +1091,18 @@ function startKitchenRealtime() {
 
         await renderKitchenOrders();
         await renderAnalytics();
+
+        // Orders are created before payment, so the alert waits until the
+        // webhook marks one as paid.
+        const order = payload.new;
+        if (
+          order.payment_status === "paid" &&
+          order.status === "new" &&
+          !alertedOrders.has(order.id)
+        ) {
+          alertedOrders.add(order.id);
+          showKitchenNewOrderAlert(order);
+        }
 
       }
     )
@@ -980,8 +1126,6 @@ function startKitchenRealtime() {
     if (window.supabase) { clearInterval(iv); startKitchenRealtime(); }
   }, 50);
 })();
-
-let customerOrderChannel = null;
 
 function enableKitchenSound() {
   try {
@@ -1054,36 +1198,90 @@ function playKitchenOrderSound() {
   }
 }
 
-function startCustomerRealtime(orderNumber) {
-  if (!window.supabase || !orderNumber) return;
+function stopOrderPolling() {
+  if (trackTimer) clearInterval(trackTimer);
+  trackTimer = null;
+}
 
-  // Remove any previous customer listener
-  if (customerOrderChannel) {
-    window.supabase.removeChannel(customerOrderChannel);
-    customerOrderChannel = null;
+function startOrderPolling() {
+  stopOrderPolling();
+  trackTimer = setInterval(refreshTrackedOrder, 20000);
+}
+
+async function fetchOrderStatus(details) {
+  const res = await fetch(window.ORDER_STATUS_FUNCTION_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      business_id: BUSINESS_ID,
+      order_number: details.orderNumber,
+      tracking_token: details.token || undefined,
+      whatsapp: details.whatsapp || undefined
+    })
+  });
+  const data = await res.json();
+  return { ok: res.ok, data };
+}
+
+function toTrackedView(data) {
+  return {
+    id: data.order_number,
+    name: data.first_name,
+    type: data.order_type,
+    time: data.requested_time || "Not specified",
+    total: Number(data.total),
+    status: data.status,
+    paymentStatus: data.payment_status,
+    items: (data.items || []).map(item => ({
+      name: item.name_snapshot,
+      qty: item.quantity,
+      price: Number(item.unit_price)
+    })),
+    createdAt: new Date(data.created_at).getTime()
+  };
+}
+
+function showTrackedOrder(data) {
+  const order = toTrackedView(data);
+  renderCustomerStatus(order);
+  document.getElementById("customerStatus")?.classList.add("show");
+  renderLookup(order);
+
+  if (order.status === "completed" || order.status === "cancelled") {
+    stopOrderPolling();
+    clearTrackedOrder();
   }
+}
 
-  customerOrderChannel = window.supabase
-    .channel(`eatsbythia-customer-order-${orderNumber}`)
-    .on(
-      "postgres_changes",
-      {
-        event: "UPDATE",
-        schema: "public",
-        table: "orders",
-        filter: `order_number=eq.${orderNumber}`
-      },
-      async (payload) => {
-        console.log(
-          "Customer order update received:",
-          payload.new
-        );
+async function refreshTrackedOrder() {
+  if (!trackedOrder) return;
+  try {
+    const { ok, data } = await fetchOrderStatus(trackedOrder);
+    if (ok) showTrackedOrder(data);
+  } catch (err) {
+    console.error("Order refresh failed:", err);
+  }
+}
 
-        await lookupOrder();
-      }
-    )
-    .subscribe((status) => {
-      console.log("Customer realtime:", status);
+function startOfToday() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return today;
+}
+
+function renderKitchenHeader() {
+  const now = new Date();
+  const hour = now.getHours();
+  const greeting =
+    hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+
+  document.getElementById("adminGreeting").textContent = `${greeting}, Fathia.`;
+  document.getElementById("adminDate").textContent =
+    "Kitchen dashboard · " +
+    now.toLocaleDateString("en-GB", {
+      weekday: "long",
+      day: "numeric",
+      month: "long"
     });
 }
 
@@ -1107,7 +1305,7 @@ async function renderKitchenOrders() {
         total,
         created_at
       `)
-      .eq("business_id", "944d4bd8-6533-4df2-82d8-b7107e4110cf")
+      .eq("business_id", BUSINESS_ID)
       .eq("payment_status", "paid")
       .order("created_at", { ascending: false });
 
@@ -1125,6 +1323,7 @@ async function renderKitchenOrders() {
       document.getElementById("kpiNew").textContent = "0";
       document.getElementById("kpiTotal").textContent = "0";
       document.getElementById("kpiReady").textContent = "0";
+      document.getElementById("kpiSales").textContent = "£0.00";
       return;
     }
 
@@ -1245,7 +1444,7 @@ async function renderKitchenOrders() {
           <div class="order-meta">
             🕐 ${escapeHtml(o.time)} · ${escapeHtml(o.type)}<br>
             📍 ${
-              o.type === "delivery"
+              String(o.type).toLowerCase() === "delivery"
                 ? escapeHtml(o.address)
                 : "Collection"
             }<br>
@@ -1267,7 +1466,7 @@ async function renderKitchenOrders() {
               </button>
 
               ${
-                o.status !== "completed"
+                liveNext[o.status]
                   ? `
                     <button
                       class="oa next"
@@ -1294,8 +1493,15 @@ async function renderKitchenOrders() {
     document.getElementById("kpiNew").textContent =
       kitchenOrders.filter(o => o.status === "new").length;
 
+    const todaysOrders = kitchenOrders.filter(
+      o => new Date(o.createdAt) >= startOfToday()
+    );
+
     document.getElementById("kpiTotal").textContent =
-      kitchenOrders.length;
+      todaysOrders.length;
+
+    document.getElementById("kpiSales").textContent =
+      "£" + todaysOrders.reduce((sum, o) => sum + o.total, 0).toFixed(2);
 
     document.getElementById("kpiReady").textContent =
       kitchenOrders.filter(o => o.status === "ready").length;
@@ -1324,7 +1530,8 @@ function renderCustomerStatus(order) {
     confirmed: 1,
     preparing: 2,
     ready: 3,
-    completed: 4
+    completed: 4,
+    cancelled: 0
   };
 
   const idx = statusIndex[order.status] ?? 0;
@@ -1355,47 +1562,36 @@ function renderCustomerStatus(order) {
       "Your order is ready. See you soon!",
 
     completed:
-      "Order completed. Thank you for ordering from Eatsbythia!"
+      "Order completed. Thank you for ordering from Eatsbythia!",
+
+    cancelled:
+      "This order was cancelled. You haven't been charged for an unpaid order.",
+
+    awaitingPayment:
+      "We're confirming your payment. This usually takes a few seconds."
   };
 
   document.getElementById("customerStatusMessage").textContent =
-    messages[order.status] || messages.new;
+    order.paymentStatus === "pending" && order.status === "new"
+      ? messages.awaitingPayment
+      : messages[order.status] || messages.new;
 
   box.classList.add("show");
 }
 
-function showPlacedOrderStatus(orderNumber) {
+function showPlacedOrderStatus(orderNumber, token) {
   closeOrderModal();
 
   const input = document.getElementById("lookupInput");
+  if (input) input.value = orderNumber;
 
-  if (input) {
-    input.value = orderNumber;
-  }
-
-  startCustomerRealtime(orderNumber);
-
-  lookupOrder();
+  trackedOrder = { orderNumber, token };
+  saveTrackedOrder();
+  startOrderPolling();
+  refreshTrackedOrder();
 }
 function closeOrderModal(){document.getElementById("modal").classList.remove("show");window.scrollTo({top:0,behavior:"smooth"})}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
-function setDemoMode(mode, btn) {
-  document
-    .querySelectorAll("#modeSwitch button")
-    .forEach(x => x.classList.remove("active"));
-
-  if (btn) {
-    btn.classList.add("active");
-  }
-
-  if (mode === "kitchen") {
-    toggleAdmin();
-  } else {
-    showCustomer();
-  }
-}
-
-
 async function loginKitchen(){
   enableKitchenSound(); // capture the real click before any await
 
@@ -1432,11 +1628,11 @@ document.body.classList.add("kitchen-mode");
 document.getElementById("customer").style.display = "none";
 document.getElementById("admin").classList.add("show");
 
+renderKitchenHeader();
+await loadOrderingState();
 await renderKitchenOrders();
 await renderAnalytics();
-
-renderDishes();
-renderMenuEditor();
+await renderMenuEditor();
 
 window.scrollTo(0, 0);
 }
@@ -1447,91 +1643,43 @@ function closeKitchenLogin(){
 }
 
 async function lookupOrder() {
-  const q = document
+  const orderNumber = document
     .getElementById("lookupInput")
     .value
     .trim()
     .toUpperCase();
-
+  const whatsapp = document.getElementById("lookupPhone").value.trim();
   const box = document.getElementById("lookupResult");
-
-  if (!q) {
+  const showError = text => {
     box.innerHTML =
-      '<div style="margin-top:12px;font-size:10px;color:#b4314c">Enter your order number first.</div>';
-    return;
-  }
-
-  const { data, error } = await window.supabase
-    .from("orders")
-    .select(`
-      id,
-      order_number,
-      status,
-      order_type,
-      address,
-      requested_time,
-      total,
-      created_at,
-      customers (
-        name,
-        whatsapp
-      ),
-      order_items (
-        name_snapshot,
-        unit_price,
-        quantity
-      )
-    `)
-    .eq(
-      "business_id",
-      "944d4bd8-6533-4df2-82d8-b7107e4110cf"
-    )
-    .eq("order_number", q)
-    .maybeSingle();
-
-  if (error) {
-    console.error("Failed to find order:", error);
-
-    box.innerHTML =
-      '<div style="margin-top:12px;font-size:10px;color:#b4314c">We couldn’t look up that order right now.</div>';
-
-    return;
-  }
-
-  if (!data) {
-    box.innerHTML =
-      '<div style="margin-top:12px;font-size:10px;color:#b4314c">We couldn’t find that order. Check the order number and try again.</div>';
-
-    return;
-  }
-startCustomerRealtime(data.order_number);
-
-  const order = {
-    id: data.order_number,
-    name: data.customers?.name || "Customer",
-    phone: data.customers?.whatsapp || "",
-    type: data.order_type,
-    address: data.address || "",
-    time: data.requested_time || "Not specified",
-    total: Number(data.total),
-    status: data.status,
-    items: (data.order_items || []).map(item => ({
-      name: item.name_snapshot,
-      qty: item.quantity,
-      price: Number(item.unit_price)
-    })),
-    createdAt: new Date(data.created_at).getTime()
+      `<div style="margin-top:12px;font-size:10px;color:#b4314c">${escapeHtml(text)}</div>`;
   };
 
-  renderCustomerStatus(order);
-  document.getElementById("customerStatus")?.classList.add("show");
-  renderLookup(order);
+  if (!orderNumber || !whatsapp) {
+    showError("Enter your order number and WhatsApp number.");
+    return;
+  }
+
+  try {
+    const { ok, data } = await fetchOrderStatus({ orderNumber, whatsapp });
+    if (!ok) {
+      showError(data.error || "We couldn’t find that order.");
+      return;
+    }
+
+    trackedOrder = { orderNumber, whatsapp };
+    startOrderPolling();
+    showTrackedOrder(data);
+  } catch (err) {
+    console.error("Failed to find order:", err);
+    showError("We couldn’t look up that order right now.");
+  }
 }
 let lastLookedUpOrder = null;
 function renderLookup(o){
  lastLookedUpOrder = o;
- const idx={new:0,confirmed:1,preparing:2,ready:3,completed:3}[o.status]??0;
- const msg={new:"Waiting for Fathia to confirm.",confirmed:"Your order has been confirmed.",preparing:"Your food is being prepared. 🍛",ready:"Your order is ready.",completed:"This order has been completed."}[o.status];
+ const idx={new:0,confirmed:1,preparing:2,ready:3,completed:3,cancelled:0}[o.status]??0;
+ const msg={new:"Waiting for Fathia to confirm.",confirmed:"Your order has been confirmed.",preparing:"Your food is being prepared. 🍛",ready:"Your order is ready.",completed:"This order has been completed.",cancelled:"This order was cancelled."}[o.status];
  document.getElementById("lookupResult").innerHTML=`<div class="receipt"><b>#${o.id} · ${statusLabel[o.status]}</b><div style="font-size:10px;color:#777;margin-top:5px">${msg}</div><div style="margin-top:10px;font-size:10px">${o.items.map(x=>`${x.qty} × ${escapeHtml(x.name)}`).join("<br>")}</div><div style="font-weight:800;margin-top:9px">£${o.total.toFixed(2)}</div><div class="receipt-actions"><button onclick="copyReceipt('${o.id}')">Copy order details</button></div></div>`;
 }
 function copyReceipt(id){
@@ -1546,10 +1694,9 @@ async function renderAnalytics() {
     const { data: orders, error } = await window.supabase
       .from("orders")
       .select("id, total")
-      .eq(
-        "business_id",
-        "944d4bd8-6533-4df2-82d8-b7107e4110cf"
-      );
+      .eq("business_id", BUSINESS_ID)
+      .eq("payment_status", "paid")
+      .gte("created_at", startOfToday().toISOString());
 
     if (error) {
       console.error("Failed to load analytics:", error);
@@ -1619,13 +1766,9 @@ async function renderAnalytics() {
     console.error("Analytics failed:", err);
   }
 }
-const oldRenderKitchen=renderKitchenOrders;
-renderKitchenOrders=function(){oldRenderKitchen();renderAnalytics();};
 document.getElementById("lookupPanel").classList.add("show");
 
 
-function getMenu(){return JSON.parse(localStorage.getItem("eatsbythia_menu")||"null")||products.map(p=>[p[0],p[1],p[2],true])}
-function saveMenu(m){localStorage.setItem("eatsbythia_menu",JSON.stringify(m));renderCustomerMenu();renderMenuEditor()}
 function renderCustomerMenu(){
  const m = products;
 const g = document.getElementById("menuGrid");
@@ -1642,42 +1785,48 @@ g.innerHTML = m.map(p => `
 
       <div class="desc">${escapeHtml(p[2])}</div>
 
+      <div class="dish-allergens">
+        ${p[4]
+          ? "Allergens: " + escapeHtml(p[4])
+          : "Allergen details: please ask before ordering"}
+      </div>
+
       <button
         class="add"
-        onclick="addNamed('${encodeURIComponent(p[0])}', ${p[1]})"
+        onclick="add('${p[3]}')"
       >
         Add to order +
       </button>
     </div>
   </article>
 `).join("") || '<div class="empty-menu">No dishes are currently available.</div>';
+  renderOrderingState();
 }
-function addNamed(n, p) {
-  if (!p) {
+function add(id) {
+  const product = products.find(p => p[3] === id);
+
+  if (!product) {
+    showToast("Dish not found.");
+    return;
+  }
+  if (!product[1]) {
     showToast("Fathia has not set a price for this dish yet.");
     return;
   }
 
-  const name = decodeURIComponent(n);
-  const i = products.findIndex(x => x[0] === name);
-
-  if (i < 0) {
-    showToast("Dish not found.");
-    return;
-  }
-
-  add(i);
-}
-function add(i) {
-  if (!cart[i]) {
-    cart[i] = 0;
-  }
-
-  cart[i] += 1;
+  cart[id] = (cart[id] || 0) + 1;
 
   renderCart();
 
   document.getElementById("drawer").classList.add("show");
+}
+function removeFromCart(id) {
+  if (!cart[id]) return;
+
+  cart[id] -= 1;
+  if (cart[id] <= 0) delete cart[id];
+
+  renderCart();
 }
 function renderCart() {
   const cartEl = document.getElementById("cart");
@@ -1685,7 +1834,9 @@ function renderCart() {
 
   if (!cartEl || !countEl) return;
 
-  const entries = Object.entries(cart).filter(([i, q]) => q > 0);
+  const entries = Object.entries(cart).filter(
+    ([id, q]) => q > 0 && products.some(p => p[3] === id)
+  );
 
   const totalItems = entries.reduce((sum, [, q]) => sum + q, 0);
 
@@ -1702,8 +1853,8 @@ function renderCart() {
 
   let orderTotal = 0;
 
-  const rows = entries.map(([i, q]) => {
-    const product = products[Number(i)];
+  const rows = entries.map(([id, q]) => {
+    const product = products.find(p => p[3] === id);
 
     if (!product) return "";
 
@@ -1722,8 +1873,8 @@ function renderCart() {
 
         <div>
           <b>£${itemTotal.toFixed(2)}</b>
-          <button onclick="removeFromCart(${i})">−</button>
-          <button onclick="add(${i})">+</button>
+          <button onclick="removeFromCart('${id}')" aria-label="Remove one">−</button>
+          <button onclick="add('${id}')" aria-label="Add one">+</button>
         </div>
       </div>
     `;
@@ -1764,12 +1915,11 @@ async function renderMenuEditor() {
       price,
       available,
       active,
-      sort_order
+      sort_order,
+      allergens
     `)
-    .eq(
-      "business_id",
-      "944d4bd8-6533-4df2-82d8-b7107e4110cf"
-    )
+    .eq("business_id", BUSINESS_ID)
+    .eq("active", true)
     .order("sort_order");
 
   if (error) {
@@ -1810,6 +1960,14 @@ async function renderMenuEditor() {
         Remove
       </button>
 
+      <input
+        class="editor-allergens"
+        value="${escapeHtml(dish.allergens || "")}"
+        placeholder="Allergens, e.g. peanuts, fish, celery"
+        aria-label="Allergens for ${escapeHtml(dish.name)}"
+        onchange="editDish('${dish.id}','allergens',this.value)"
+      >
+
     </div>
   `).join("");
 }
@@ -1827,6 +1985,10 @@ async function editDish(menuItemId, field, value) {
 
   if (field === "price") {
     updates.price = Number(value);
+  }
+
+  if (field === "allergens") {
+    updates.allergens = value.trim();
   }
 
   if (Object.keys(updates).length === 0) {
@@ -1895,84 +2057,6 @@ async function toggleDishMVPById(menuItemId) {
 
   await renderMenuEditor();
 }
-async function toggleDishMVP(i) {
-  const dish = products[i];
-
-  if (!dish || !dish[3]) {
-    console.error("Could not identify menu item:", i, dish);
-    return;
-  }
-
-  const menuItemId = dish[3];
-
-  // Get the current availability directly from Supabase
-  const { data, error } = await window.supabase
-    .from("menu_items")
-    .select("id, name, available")
-    .eq("id", menuItemId)
-    .single();
-
-  if (error || !data) {
-    console.error("Failed to get menu item:", error);
-    showToast("Couldn't update dish.");
-    return;
-  }
-
-  const newAvailability = !data.available;
-
-  const { error: updateError } = await window.supabase
-    .from("menu_items")
-    .update({
-      available: newAvailability
-    })
-    .eq("id", menuItemId);
-
-  if (updateError) {
-    console.error("Failed to update dish availability:", updateError);
-    showToast("Couldn't update dish.");
-    return;
-  }
-
-  showToast(
-    newAvailability
-      ? "Dish available ✓"
-      : "Dish marked sold out"
-  );
-
-  // Refresh the editor from Supabase
-  await loadMenuFromSupabase();
-}
-async function addDish(name, price, description = "") {
-  if (!window.supabase) {
-    console.error("Supabase is not ready.");
-    return;
-  }
-
-  const { data, error } = await window.supabase
-    .from("menu_items")
-    .insert({
-      business_id: "944d4bd8-6533-4df2-82d8-b7107e4110cf",
-      name: name.trim(),
-      description: description.trim() || "Freshly prepared by Eatsbythia.",
-      price: Number(price),
-      available: true,
-      active: true,
-      sort_order: 999
-    })
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Failed to add dish:", error);
-    showToast("Unable to add dish");
-    return;
-  }
-
-  console.log("Dish added:", data);
-  showToast("Dish added ✓");
-
-  await renderMenuEditor();
-}
 async function removeDish(menuItemId) {
   if (!window.supabase) {
     console.error("Supabase is not ready.");
@@ -1999,15 +2083,9 @@ async function removeDish(menuItemId) {
 
   await renderMenuEditor();
 }
-function addDish(){const n=document.getElementById("newDish").value.trim(),p=Number(document.getElementById("newPrice").value);if(!n||!p){showToast("Add a dish name and price.");return}const m=getMenu();m.push([n,p,"Freshly prepared by Eatsbythia.",true]);saveMenu(m);document.getElementById("newDish").value="";document.getElementById("newPrice").value="";showToast("Dish added ✓")}
-function publishMenu(){saveMenu(getMenu());showToast("Today's menu published ✓")}
 renderCustomerMenu();renderMenuEditor();
 startCustomerMenuRealtime();
 </script>
 
-<div style="margin:18px 0;padding:16px;background:#f0edff;border:1px solid #ddd7fb;border-radius:13px;font:10px/1.6 system-ui;color:#5d51bf">
-<b>Eatsbythia production handoff</b><br>
-The next connection is a real Supabase database. This prototype is deliberately kept functional while the database layer is configured.
-</div>
 </body>
 </html>
