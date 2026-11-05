@@ -268,6 +268,7 @@ body.kitchen-mode #admin {
 .dish-allergens{font-size:10px;line-height:1.5;color:#666;margin:7px 0 0}
 .editor-allergens{grid-column:1/-1}
 .place:disabled{opacity:.5;cursor:not-allowed}
+.add:disabled{background:#e4dfd8;color:#6f6a63;cursor:not-allowed}
 .lookup input{min-width:0}
 </style>
 </head>
@@ -758,6 +759,7 @@ function renderOrderingState() {
 
   document.querySelectorAll("#menuGrid .add").forEach(button => {
     button.disabled = !open;
+    button.textContent = open ? "Add to order +" : "Orders closed";
   });
 }
 
