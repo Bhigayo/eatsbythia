@@ -268,6 +268,24 @@ body.kitchen-mode #admin {
 .dish-allergens{font-size:10px;line-height:1.5;color:#666;margin:7px 0 0}
 .editor-allergens{grid-column:1/-1}
 .place:disabled{opacity:.5;cursor:not-allowed}
+.cart{max-height:min(46vh,340px)}
+.cart-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #2c2c2c}
+.cart-row b{font-size:14px;font-weight:700}
+.cart-row .cart-unit{font-size:12px;color:#a8a8a8;margin-top:2px}
+.cart-side{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.cart-side b{font-size:14px}
+.stepper{display:flex;align-items:center;background:#2a2a2a;border-radius:999px;padding:3px}
+.stepper button{width:30px;height:30px;border:0;border-radius:50%;background:transparent;color:#fff;font-size:17px;line-height:1;cursor:pointer}
+.stepper button:hover{background:#3a3a3a}
+.stepper span{min-width:22px;text-align:center;font-size:13px;font-weight:700}
+.cart-total{display:flex;justify-content:space-between;align-items:baseline;padding:14px 0 4px;font-size:14px}
+.cart-total b{font-size:18px}
+.empty-cart{color:#a8a8a8;font-size:13px;padding:8px 0}
+.drawer .place{background:#fff;color:var(--ink);font-size:13px;padding:14px;border-radius:12px;cursor:pointer}
+.drawer .place:hover{background:#f1ece4}
+.basket-pill{position:fixed;right:18px;bottom:18px;z-index:9;display:none;align-items:center;gap:10px;border:0;background:var(--ink);color:#fff;border-radius:999px;padding:13px 18px;font-size:13px;font-weight:800;box-shadow:0 12px 30px #0003;cursor:pointer}
+.basket-pill.show{display:flex}
+@media(max-width:600px){body.basket-open .admin-toggle{display:none}}
 .add:disabled{background:#e4dfd8;color:#6f6a63;cursor:not-allowed}
 .lookup input{min-width:0}
 </style>
@@ -313,12 +331,14 @@ body.kitchen-mode #admin {
 </div>
 <section id="menu"><div class="menu-head"><div><div class="eyebrow">Today's menu</div><h2>What's cooking?</h2></div><div class="note" id="cutoffNote">Orders close at 6:00 PM</div></div><div class="menu" id="menuGrid"></div><p class="allergy-note">Have an allergy or dietary need? Please check with Eatsbythia before ordering. Our food is made in a home kitchen, so we can’t guarantee any dish is allergen free.</p><p class="legal-links"><a href="privacy.html">Privacy notice</a></p></section>
 </div></div>
+<button class="basket-pill" id="basketPill" onclick="openDrawer()">View order · <span id="pillCount">0</span> · <span id="pillTotal">£0.00</span></button>
 <div class="drawer" id="drawer">
   <div class="dh">
     <b>Your order · <span id="count">0</span></b>
     <button
       class="close"
-      onclick="document.getElementById('drawer').classList.remove('show')"
+      onclick="closeDrawer()"
+      aria-label="Close your order"
     >
       ×
     </button>
@@ -1820,7 +1840,34 @@ function add(id) {
 
   renderCart();
 
+  openDrawer();
+}
+function openDrawer() {
   document.getElementById("drawer").classList.add("show");
+  document.body.classList.add("basket-open");
+  updateBasketPill();
+}
+function closeDrawer() {
+  document.getElementById("drawer").classList.remove("show");
+  document.body.classList.remove("basket-open");
+  updateBasketPill();
+}
+function updateBasketPill() {
+  const pill = document.getElementById("basketPill");
+  if (!pill) return;
+  let count = 0;
+  let total = 0;
+  Object.entries(cart).forEach(([id, q]) => {
+    const product = products.find(p => p[3] === id);
+    if (product && q > 0) {
+      count += q;
+      total += Number(product[1]) * q;
+    }
+  });
+  document.getElementById("pillCount").textContent = count;
+  document.getElementById("pillTotal").textContent = "£" + total.toFixed(2);
+  const drawerOpen = document.getElementById("drawer").classList.contains("show");
+  pill.classList.toggle("show", count > 0 && !drawerOpen);
 }
 function removeFromCart(id) {
   if (!cart[id]) return;
@@ -1843,6 +1890,7 @@ function renderCart() {
   const totalItems = entries.reduce((sum, [, q]) => sum + q, 0);
 
   countEl.textContent = totalItems;
+  updateBasketPill();
 
   if (!entries.length) {
     cartEl.innerHTML = `
@@ -1870,13 +1918,16 @@ function renderCart() {
       <div class="cart-row">
         <div>
           <b>${escapeHtml(name)}</b>
-          <div>£${price.toFixed(2)} × ${q}</div>
+          <div class="cart-unit">£${price.toFixed(2)} each</div>
         </div>
 
-        <div>
+        <div class="cart-side">
           <b>£${itemTotal.toFixed(2)}</b>
-          <button onclick="removeFromCart('${id}')" aria-label="Remove one">−</button>
-          <button onclick="add('${id}')" aria-label="Add one">+</button>
+          <div class="stepper">
+            <button onclick="removeFromCart('${id}')" aria-label="Remove one ${escapeHtml(name)}">−</button>
+            <span>${q}</span>
+            <button onclick="add('${id}')" aria-label="Add one ${escapeHtml(name)}">+</button>
+          </div>
         </div>
       </div>
     `;
